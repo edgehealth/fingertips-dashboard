@@ -3,27 +3,103 @@ import { Box, Typography } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface FilterState {
-  selectedMetricDetails: { id: string; name: string } | null;
-  selectedICB: string | null;
-  barChartData: any[];
-  getAreaName: (areaCode: string) => string | undefined;
-  loading: boolean;
+  selectedMetricDetails?: { id: string; name: string } | null;
+  selectedICB?: string | null;
+  data?: any[];
+  selectedMetric?: string | null;
+  getAreaName?: (areaCode: string) => string | undefined;
+  loading?: boolean;
 }
 
 interface ICBBarChartProps {
-  filterState: FilterState;
+  filterState?: FilterState;
 }
 
 const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
-  const { 
-    selectedMetricDetails, 
-    selectedICB, 
-    barChartData, 
-    getAreaName, 
-    loading 
-  } = filterState;
+  // Create chart data using useMemo at the top level
+  const chartData = React.useMemo(() => {
+    if (!filterState || !filterState.selectedMetric || !filterState.data) {
+      return [];
+    }
 
-  const selectedRegionName = selectedICB ? getAreaName(selectedICB) : null;
+    const { data, selectedMetric, selectedICB, getAreaName } = filterState;
+
+    try {
+      // Filter data for the selected metric
+      const filtered = data.filter((item: any) => 
+        item && 
+        item.indicator_name === selectedMetric &&
+        item.value !== undefined &&
+        item.value !== null &&
+        !isNaN(item.value)
+      );
+
+      // Get England data
+      const englandData = filtered.filter((item: any) => 
+        item.area_name && (
+          item.area_name.toLowerCase().includes('england') || 
+          item.area_code === 'E92000001' ||
+          item.area_name === 'England'
+        )
+      );
+
+      // Get ICB data if selected
+      const icbData = selectedICB ? 
+        filtered.filter((item: any) => item.area_code === selectedICB) : [];
+
+      // Get unique time periods
+      const timePeriodsSet = new Set(englandData.map((item: any) => (item as any).time_period));
+      const timePeriods = Array.from(timePeriodsSet).sort();
+
+      // Create chart data
+      const result: any[] = [];
+      
+      timePeriods.forEach(period => {
+        const englandItem = englandData.find((item: any) => (item as any).time_period === period);
+        const icbItem = icbData.find((item: any) => (item as any).time_period === period);
+        
+        if (englandItem) {
+          const dataPoint: any = {
+            year: period,
+            England: englandItem.value,
+          };
+          
+          if (icbItem && selectedICB && getAreaName) {
+            const icbName = getAreaName(selectedICB) || 'Selected ICB';
+            dataPoint[icbName] = icbItem.value;
+          }
+          
+          result.push(dataPoint);
+        }
+      });
+
+      console.log('=== BAR CHART DATA ===');
+      console.log('Chart data generated:', result);
+      
+      return result;
+    } catch (error) {
+      console.error('Error creating chart data:', error);
+      return [];
+    }
+  }, [filterState]);
+
+  // Early returns after hooks
+  if (!filterState) {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        height: '100%',
+        color: 'text.secondary'
+      }}>
+        <Typography>Loading chart...</Typography>
+      </Box>
+    );
+  }
+
+  const { selectedMetricDetails, selectedICB, getAreaName, loading } = filterState;
+  const selectedRegionName = (selectedICB && getAreaName) ? getAreaName(selectedICB) : null;
 
   if (loading) {
     return (
@@ -55,7 +131,7 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
     );
   }
 
-  if (barChartData.length === 0) {
+  if (chartData.length === 0) {
     return (
       <Box sx={{ 
         display: 'flex', 
@@ -70,7 +146,7 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
           No data available for comparison
         </Typography>
         <Typography variant="caption" sx={{ marginTop: '8px', opacity: 0.7 }}>
-          {selectedMetricDetails.name}
+          {selectedMetricDetails.name || 'Unknown metric'}
         </Typography>
       </Box>
     );
@@ -114,17 +190,17 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       <Box sx={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={barChartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis 
               dataKey="year" 
               stroke="#666"
-              fontSize={11}
+              fontSize={10}
               angle={-45}
               textAnchor="end"
-              height={60}
+              height={80}
             />
             <YAxis 
               stroke="#666"
@@ -138,7 +214,7 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
               }}
               formatter={(value: any, name: string) => [
-                value?.toFixed(1) || 'No data', 
+                (typeof value === 'number' && !isNaN(value)) ? value.toFixed(1) : 'No data', 
                 name
               ]}
             />
@@ -149,11 +225,11 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
               name="England"
               radius={[2, 2, 0, 0]}
             />
-            {selectedICB && (
+            {selectedICB && selectedRegionName && (
               <Bar 
-                dataKey={selectedRegionName || 'Selected ICB'} 
+                dataKey={selectedRegionName} 
                 fill="#E91E63" 
-                name={selectedRegionName || 'Selected ICB'}
+                name={selectedRegionName}
                 radius={[2, 2, 0, 0]}
               />
             )}

@@ -112,7 +112,7 @@ const ChartPanel: React.FC = () => {
             padding: 0,
           }}
         >
-          <BottomRightPetal />
+          <BottomRightPetal filterState={combinedState} />
         </Box>
       </Box>
     </Box>

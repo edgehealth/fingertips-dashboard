@@ -1,7 +1,22 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import ICBBarChart from '../Charts/ICBBarChart';
 
-const BottomRightPetal: React.FC = () => {
+// Define the type for the filter state with optional properties for safety
+interface FilterState {
+  selectedMetricDetails?: { id: string; name: string } | null;
+  selectedICB?: string | null;
+  barChartData?: any[];
+  getAreaName?: (areaCode: string) => string | undefined;
+  loading?: boolean;
+  // Add other properties as needed
+}
+
+interface BottomRightPetalProps {
+  filterState?: FilterState;
+}
+
+const BottomRightPetal: React.FC<BottomRightPetalProps> = ({ filterState }) => {
   const [petalImage, setPetalImage] = React.useState<string>('');
   
   React.useEffect(() => {
@@ -13,6 +28,21 @@ const BottomRightPetal: React.FC = () => {
         console.error('Failed to load bottom-right-petal.png:', error);
       });
   }, []);
+
+  // Add safety check for filterState
+  if (!filterState) {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        height: '100%',
+        color: 'text.secondary'
+      }}>
+        <Typography>Loading chart data...</Typography>
+      </Box>
+    );
+  }
 
   if (!petalImage) {
     return <div>Loading...</div>;
@@ -51,10 +81,71 @@ const BottomRightPetal: React.FC = () => {
           justifyContent: 'center',
         }}
       >
-        {/* Your comparison chart goes here */}
+        {/* Bar Chart Component with error boundary */}
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            maxWidth: '500px',
+            maxHeight: '350px',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(78, 205, 196, 0.3)',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            marginRight: '250px',
+          }}
+        >
+          <ErrorBoundary>
+            <ICBBarChart filterState={filterState} />
+          </ErrorBoundary>
+        </Box>
       </Box>
     </Box>
   );
 };
+
+// Simple Error Boundary component
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error('BarChart Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          height: '100%',
+          color: 'text.secondary',
+          flexDirection: 'column',
+          textAlign: 'center'
+        }}>
+          <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+            Chart temporarily unavailable
+          </Typography>
+          <Typography variant="caption" sx={{ marginTop: '8px', opacity: 0.7 }}>
+            Try selecting a different metric
+          </Typography>
+        </Box>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 export default BottomRightPetal;

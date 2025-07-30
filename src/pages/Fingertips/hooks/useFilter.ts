@@ -32,16 +32,42 @@ export const useFilter = () => {
     }
   }, [availableMetrics, selectedMetric]);
 
-  // Get filtered data for current selections (for heatmap)
+  // Get filtered data for current selections (for heatmap) - FIXED FOR MULTIPLE TIME PERIODS
   const filteredData = useMemo(() => {
     if (!selectedMetric) return {};
     
-    const filtered = data.filter(item => item.indicator_name === selectedMetric);
+    const filtered = data.filter(item => 
+      item.indicator_name === selectedMetric &&
+      item.value !== undefined &&
+      item.value !== null &&
+      !isNaN(item.value)
+    );
     
-    // Create lookup by area_code
+    // Group by area_code and get the most recent time period for each area
     const lookup: { [areaCode: string]: number } = {};
+    const areaTimeData: { [areaCode: string]: any[] } = {};
+    
+    // Group data by area code
     filtered.forEach(item => {
-      lookup[item.area_code] = item.value;
+      if (!areaTimeData[item.area_code]) {
+        areaTimeData[item.area_code] = [];
+      }
+      areaTimeData[item.area_code].push(item);
+    });
+    
+    // For each area, get the most recent time period
+    Object.keys(areaTimeData).forEach(areaCode => {
+      const areaData = areaTimeData[areaCode];
+      
+      // Sort by time_period_sortable (descending) to get most recent first
+      const sortedData = areaData.sort((a, b) => {
+        const aTime = (a as any).time_period_sortable || 0;
+        const bTime = (b as any).time_period_sortable || 0;
+        return bTime - aTime; // Most recent first
+      });
+      
+      // Use the most recent data point
+      lookup[areaCode] = sortedData[0].value;
     });
     
     return lookup;
@@ -52,7 +78,12 @@ export const useFilter = () => {
     if (!selectedMetric) return { min: 0, max: 100 };
     
     const values = data
-      .filter(item => item.indicator_name === selectedMetric)
+      .filter(item => 
+        item.indicator_name === selectedMetric &&
+        item.value !== undefined &&
+        item.value !== null &&
+        !isNaN(item.value)
+      )
       .map(item => item.value);
     
     if (values.length === 0) return { min: 0, max: 100 };
@@ -67,21 +98,17 @@ export const useFilter = () => {
   const averageValue = useMemo(() => {
     if (!selectedMetric) return undefined;
     
-    const filteredData = data.filter(item => item.indicator_name === selectedMetric);
-    
-    console.log('=== CALCULATING AVERAGE ===');
-    console.log('Selected metric:', selectedMetric);
-    console.log('Filtered data count:', filteredData.length);
+    const filteredData = data.filter(item => 
+      item.indicator_name === selectedMetric &&
+      item.value !== undefined &&
+      item.value !== null &&
+      !isNaN(item.value)
+    );
     
     if (filteredData.length === 0) return undefined;
     
     const sum = filteredData.reduce((acc, item) => acc + item.value, 0);
-    const average = sum / filteredData.length;
-    
-    console.log('Sum:', sum);
-    console.log('Average:', average);
-    
-    return average;
+    return sum / filteredData.length;
   }, [data, selectedMetric]);
 
   // Get selected metric details
@@ -102,7 +129,7 @@ export const useFilter = () => {
 
   return {
     // Data
-    data,
+    data, // Raw data for bar chart
     filteredData,
     
     // Selections
@@ -118,6 +145,7 @@ export const useFilter = () => {
     valueRange,
     getValueForArea,
     getAreaName,
+    
     loading,
   };
 };
