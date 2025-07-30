@@ -9,12 +9,14 @@ interface MetricOption {
 
 interface MetricCardProps {
   selectedMetric: MetricOption | null;
-  averageValue?: number;
+  displayValue?: number;
+  displayLabel?: string;
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
   selectedMetric,
-  averageValue,
+  displayValue,
+  displayLabel,
 }) => {
   
   if (!selectedMetric) {
@@ -84,8 +86,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
           </Typography>
         </Box>
 
-        {/* The Average Value */}
-        {averageValue !== undefined ? (
+        {/* The Value */}
+        {displayValue !== undefined ? (
           <Box sx={{ textAlign: 'center', marginBottom: '16px' }}>
             <Typography
               variant="h4"
@@ -96,7 +98,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 lineHeight: 1,
               }}
             >
-              {averageValue.toFixed(1)}
+              {displayValue.toFixed(1)}
             </Typography>
             <Typography
               variant="caption"
@@ -109,7 +111,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 marginTop: '4px',
               }}
             >
-              Average across all areas
+              {displayLabel || "Value"}
             </Typography>
           </Box>
         ) : (

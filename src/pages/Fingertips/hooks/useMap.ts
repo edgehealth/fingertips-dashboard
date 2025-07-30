@@ -197,5 +197,6 @@ useEffect(() => {
     handleICBHover,
     handleICBLeave,
     getRegionColor,
+    clearSelection: () => setSelectedICB(null),
   };
 };

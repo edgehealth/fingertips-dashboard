@@ -6,10 +6,27 @@ import TopRightPetal from './Petals/TopRightPetal';
 import BottomLeftPetal from './Petals/BottomLeftPetal';
 import BottomRightPetal from './Petals/BottomRightPetal';
 import { useFilter } from '../../hooks/useFilter';
+import { useMap } from '../../../Fingertips/hooks/useMap';
 
 const ChartPanel: React.FC = () => {
   // Lift the filter state up to the parent
   const filterState = useFilter();
+  
+  // Get the selected ICB from the map
+  const { selectedICB, handleICBClick, handleICBHover, handleICBLeave } = useMap();
+  
+  // ADD THIS DEBUG LOG:
+  console.log('=== CHART PANEL DEBUG ===');
+  console.log('ChartPanel selectedICB:', selectedICB);
+  
+  // Combine both states
+  const combinedState = {
+    ...filterState,
+    selectedICB,
+    handleICBClick,
+    handleICBHover,
+    handleICBLeave,
+  };
 
   return (
     <Box
@@ -47,7 +64,7 @@ const ChartPanel: React.FC = () => {
             padding: 0,
           }}
         >
-          <TopLeftPetal filterState={filterState} />
+          <TopLeftPetal filterState={combinedState} />
         </Box>
 
         {/* Top Right Petal - Medium */}
@@ -59,7 +76,7 @@ const ChartPanel: React.FC = () => {
             padding: 0,
           }}
         >
-          <TopRightPetal filterState={filterState} />
+          <TopRightPetal filterState={combinedState} />
         </Box>
       </Box>
 

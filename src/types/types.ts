@@ -95,6 +95,7 @@ export interface MapHookReturn {
   handleICBHover: (icbName: string) => void;
   handleICBLeave: () => void;
   getRegionColor: (icbCode: string, dataValue?: number, valueRange?: ValueRange) => string;
+  clearSelection: () => void;
 }
 
 // Component prop types
