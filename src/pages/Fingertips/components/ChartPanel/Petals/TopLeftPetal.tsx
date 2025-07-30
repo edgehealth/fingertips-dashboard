@@ -1,9 +1,24 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import FreshICBMap from '../Charts/ICBMap';
+import MetricCard from '../SharedComponents/MetricCard';
 
-const TopLeftPetal: React.FC = () => {
+// Define the type for the filter state
+interface FilterState {
+  selectedMetricDetails: { id: string; name: string } | null;
+  averageValue: number | undefined;
+  loading: boolean;
+  // Add other properties as needed
+}
+
+interface TopLeftPetalProps {
+  filterState: FilterState;
+}
+
+const TopLeftPetal: React.FC<TopLeftPetalProps> = ({ filterState }) => {
   const [petalImage, setPetalImage] = React.useState<string>('');
+  
+  const { selectedMetricDetails, averageValue, loading } = filterState;
      
   React.useEffect(() => {
     import('../../../../../assets/top-left-petal.png')
@@ -48,23 +63,42 @@ const TopLeftPetal: React.FC = () => {
           padding: '1.5rem',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingLeft: '15rem',
-          paddingRight: '4rem',
-          paddingBottom: '1.5rem',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-start',
+          paddingLeft: '16rem',
+          paddingTop: '6rem',
         }}
       >
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#2C3E50',
+            fontWeight: 600,
+            fontSize: '18px',
+            marginBottom: '1rem',
+          }}
+        >
+          ICB Map
+        </Typography>
+        
+        <Box sx={{ marginBottom: '1rem' }}>
+          <MetricCard
+            selectedMetric={selectedMetricDetails}
+            averageValue={averageValue}
+          />
+        </Box>
+        
         <Box
           sx={{
+            position: 'absolute',
+            right: '2rem',
+            top: '2rem',
             width: '100%',
             height: '90%',
             maxWidth: '320px',
             maxHeight: '300px',
             minWidth: '250px',
             minHeight: '280px',
-            marginLeft: '6rem',
-            marginTop: '-10rem',
           }}
         >
           <FreshICBMap />

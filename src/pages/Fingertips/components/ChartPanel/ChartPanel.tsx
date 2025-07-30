@@ -1,12 +1,16 @@
-// ChartPanel.tsx - All Four Petals in Flower Layout
+// ChartPanel.tsx - All Four Petals in Flower Layout with shared state
 import React from 'react';
 import { Box } from '@mui/material';
 import TopLeftPetal from './Petals/TopLeftPetal';
 import TopRightPetal from './Petals/TopRightPetal';
 import BottomLeftPetal from './Petals/BottomLeftPetal';
 import BottomRightPetal from './Petals/BottomRightPetal';
+import { useFilter } from '../../hooks/useFilter';
 
 const ChartPanel: React.FC = () => {
+  // Lift the filter state up to the parent
+  const filterState = useFilter();
+
   return (
     <Box
       sx={{
@@ -14,24 +18,24 @@ const ChartPanel: React.FC = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        height: '90vh', // Taller to fit both rows
+        height: '90vh',
         width: '100%',
-        maxWidth: '1400px', // Wider for full flower
+        maxWidth: '1400px',
         margin: '0 auto',
         padding: '1rem',
         paddingTop: '0.5rem',
-        gap: '1rem', // Gap between top and bottom rows
+        gap: '1rem',
       }}
     >
       {/* Top Row */}
       <Box
         sx={{
           display: 'flex',
-          gap: '20px', // Restored gap between petals
+          gap: '20px',
           alignItems: 'flex-end',
           justifyContent: 'flex-start',
           width: '100%',
-          marginRight: '170px', // Increased from 150px - just a bit further toward center
+          marginRight: '170px',
         }}
       >
         {/* Top Left Petal - Biggest */}
@@ -43,7 +47,7 @@ const ChartPanel: React.FC = () => {
             padding: 0,
           }}
         >
-          <TopLeftPetal />
+          <TopLeftPetal filterState={filterState} />
         </Box>
 
         {/* Top Right Petal - Medium */}
@@ -55,7 +59,7 @@ const ChartPanel: React.FC = () => {
             padding: 0,
           }}
         >
-          <TopRightPetal />
+          <TopRightPetal filterState={filterState} />
         </Box>
       </Box>
 
@@ -63,11 +67,11 @@ const ChartPanel: React.FC = () => {
       <Box
         sx={{
           display: 'flex',
-          gap: '20px', // Restored gap between petals
+          gap: '20px',
           alignItems: 'flex-start',
           justifyContent: 'flex-end',
           width: '100%',
-          marginLeft: '170px', // Increased from 150px - just a bit further toward center
+          marginLeft: '170px',
         }}
       >
         {/* Bottom Left Petal - Medium */}

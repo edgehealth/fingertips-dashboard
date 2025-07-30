@@ -1,9 +1,34 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import MetricFilter from '../../FilterPanel/Filters';
 
-const TopRightPetal: React.FC = () => {
+// Define the type for the filter state
+interface FilterState {
+  availableMetrics: { id: string; name: string }[];
+  selectedMetric: string | null;
+  setSelectedMetric: (metric: string) => void;
+  loading: boolean;
+  // Add other properties as needed
+}
+
+interface TopRightPetalProps {
+  filterState: FilterState;
+}
+
+const TopRightPetal: React.FC<TopRightPetalProps> = ({ filterState }) => {
   const [petalImage, setPetalImage] = React.useState<string>('');
   
+  const {
+    availableMetrics,
+    selectedMetric,
+    setSelectedMetric,
+    loading,
+  } = filterState;
+
+  console.log('TopRightPetal - availableMetrics:', availableMetrics);
+  console.log('TopRightPetal - selectedMetric:', selectedMetric);
+  console.log('TopRightPetal - loading:', loading);
+     
   React.useEffect(() => {
     import('../../../../../assets/top-right-petal.png')
       .then((imageModule) => {
@@ -44,14 +69,49 @@ const TopRightPetal: React.FC = () => {
       <Box
         sx={{
           flex: 1,
-          padding: '1.5rem',
+          padding: '2rem',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-start',
+          paddingLeft: '2rem',
+          paddingRight: '4rem',
+          paddingTop: '2rem',
         }}
       >
-        {/* Your filter components go here */}
+        {/* Title */}
+        <Typography
+          variant="h6"
+          sx={{
+            color: '#2C3E50',
+            fontWeight: 600,
+            fontSize: '18px',
+            marginBottom: '1.5rem',
+          }}
+        >
+          Controls
+        </Typography>
+
+
+        {/* Metric Filter */}
+        <Box
+          sx={{
+            width: '300px',
+            marginTop: '3rem',
+            marginLeft: '1rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(78, 205, 196, 0.2)',
+          }}
+        >
+          <MetricFilter
+            availableMetrics={availableMetrics}
+            selectedMetric={selectedMetric}
+            onMetricChange={setSelectedMetric}
+          />
+        </Box>
       </Box>
     </Box>
   );

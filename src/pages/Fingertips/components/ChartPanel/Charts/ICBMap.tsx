@@ -13,8 +13,16 @@ const ICBMap: React.FC = () => {
     handleICBClick,
     handleICBHover,
     handleICBLeave,
-    getRegionColor,
   } = useMap();
+
+  // Simple color function - no data integration needed
+  const getRegionColor = (icbCode: string) => {
+    if (selectedICB === icbCode) {
+      return '#E91E63'; // Pink for selected
+    }
+    
+    return '#4ECDC4'; // Default teal for all regions
+  };
 
   if (loading) {
     return (
@@ -69,7 +77,9 @@ const ICBMap: React.FC = () => {
             fontSize: '14px',
             borderRadius: '4px',
             zIndex: 1000,
-            pointerEvents: 'none'
+            pointerEvents: 'none',
+            maxWidth: '200px',
+            textAlign: 'center'
           }}>
             {hoveredICB}
           </div>
@@ -125,7 +135,7 @@ const ICBMap: React.FC = () => {
             fontStyle: selectedICB ? 'normal' : 'italic',
           }}
         >
-          {selectedICB ? selectedName : 'Click an area to select'}
+          {selectedICB ? selectedName : 'Interactive map'}
         </Typography>
       </div>
     </div>

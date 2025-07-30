@@ -32,9 +32,7 @@ const HeaderContainer: React.FC = () => {
         
         {/* Title section - takes up remaining space */}
         <TitleText />
-        
-        {/* Filters section */}
-        <Filters />
+
       </Box>
     </Box>
   );
