@@ -1,5 +1,5 @@
-const REACT_APP_DASH_API_BASE_URL = process.env.REACT_APP_DASH_API_BASE_URL;
-const REACT_APP_DASH_API_KEY = process.env.REACT_APP_DASH_API_KEY;
+const API_BASE_URL = process.env.REACT_APP_DASH_API_BASE_URL;
+const API_KEY = process.env.REACT_APP_DASH_API_KEY;
 
 export interface IndicatorData {
   indicator_id: number;
@@ -35,42 +35,31 @@ export interface IndicatorMetadataResponse {
   indicators: IndicatorMetadata[];
 }
 
-// Simple fetch wrapper with logging
 const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
-  const url = `${REACT_APP_DASH_API_BASE_URL}${endpoint}?code=${REACT_APP_DASH_API_KEY}`;
+  const url = `${API_BASE_URL}${endpoint}?code=${API_KEY}`;
   
   try {
     const response = await fetch(url, {
-      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
       },
     });
-
-    console.log('📡 Response status:', response.status);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    console.log('✅ Data received successfully');
-    return data;
-    
+    return await response.json();
   } catch (error) {
-    console.error(`API request failed for ${endpoint}:`, error);
+    console.error(`API request failed for ${endpoint}:`, error instanceof Error ? error.message : 'Unknown error');
     throw error;
   }
 };
 
-// API service functions
 export const apiService = {
-  // Get indicator data
   getIndicatorData: (): Promise<IndicatorDataResponse> => 
     fetchFromApi('/indicators'),
 
-  // Get indicator metadata
   getIndicatorMetadata: (): Promise<IndicatorMetadataResponse> => 
     fetchFromApi('/indicator_metadata'),
 };
