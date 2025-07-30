@@ -7,7 +7,7 @@ const Fingertips: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        minHeight: '120vh',
         backgroundColor: '#f0e0fb',
         padding: '1rem',
       }}

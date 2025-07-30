@@ -1,208 +1,97 @@
+// ChartPanel.tsx - All Four Petals in Flower Layout
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { colors } from '../../../../theme';
-import SimpleSVGMap from './Charts/ICBMap'; // Adjust path as needed
+import { Box } from '@mui/material';
+import TopLeftPetal from './Petals/TopLeftPetal';
+import TopRightPetal from './Petals/TopRightPetal';
+import BottomLeftPetal from './Petals/BottomLeftPetal';
+import BottomRightPetal from './Petals/BottomRightPetal';
 
 const ChartPanel: React.FC = () => {
   return (
     <Box
       sx={{
-        display: 'grid',
-        gridTemplateColumns: '2fr 1fr',
-        gridTemplateRows: '1fr 1fr',
-        gap: '1rem',
-        height: '80vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        height: '90vh', // Taller to fit both rows
         width: '100%',
+        maxWidth: '1400px', // Wider for full flower
+        margin: '0 auto',
+        padding: '1rem',
+        paddingTop: '0.5rem',
+        gap: '1rem', // Gap between top and bottom rows
       }}
     >
-      {/* Top Left - UK Map (Biggest petal) */}
+      {/* Top Row */}
       <Box
         sx={{
-          gridColumn: '1 / 2',
-          gridRow: '1 / 2',
-          backgroundColor: 'white',
-          borderRadius: '2rem 0.5rem 2rem 0.5rem', // Organic flower petal shape
-          padding: '1rem',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          overflow: 'hidden',
-          position: 'relative',
-        }}
-      >
-        <SimpleSVGMap />
-      </Box>
-
-      {/* Top Right - Key Indicator/Stats (Second petal) */}
-      <Box
-        sx={{
-          gridColumn: '2 / 3',
-          gridRow: '1 / 2',
-          background: `linear-gradient(135deg, ${colors.primary.pink}, ${colors.text.light})`,
-          borderRadius: '0.5rem 2rem 0.5rem 2rem', // Organic shape
-          padding: '2rem',
-          color: 'white',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
+          gap: '20px', // Restored gap between petals
+          alignItems: 'flex-end',
+          justifyContent: 'flex-start',
+          width: '100%',
+          marginRight: '170px', // Increased from 150px - just a bit further toward center
         }}
       >
-        <Typography variant="h3" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
-          72.9%
-        </Typography>
-        <Typography variant="h6" sx={{ marginBottom: '0.5rem', opacity: 0.9 }}>
-          Leeds CCG
-        </Typography>
-        <Typography variant="body1" sx={{ opacity: 0.8 }}>
-          Breastfeeding at 6-8 Weeks
-        </Typography>
+        {/* Top Left Petal - Biggest */}
         <Box
           sx={{
-            marginTop: '1rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: '1rem',
-            fontSize: '0.875rem',
+            width: '800px',
+            height: '500px',
+            margin: 0,
+            padding: 0,
           }}
         >
-          ↗ 2.3% from last year
+          <TopLeftPetal />
+        </Box>
+
+        {/* Top Right Petal - Medium */}
+        <Box
+          sx={{
+            width: '400px',
+            height: '320px',
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          <TopRightPetal />
         </Box>
       </Box>
 
-      {/* Bottom Left - Chart/Progress (Third petal) */}
+      {/* Bottom Row */}
       <Box
         sx={{
-          gridColumn: '1 / 2',
-          gridRow: '2 / 2',
-          backgroundColor: 'white',
-          borderRadius: '2rem 0.5rem 0.5rem 2rem', // Organic shape
-          padding: '2rem',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          position: 'relative',
+          display: 'flex',
+          gap: '20px', // Restored gap between petals
+          alignItems: 'flex-start',
+          justifyContent: 'flex-end',
+          width: '100%',
+          marginLeft: '170px', // Increased from 150px - just a bit further toward center
         }}
       >
-        <Typography 
-          variant="h6" 
-          sx={{ 
-            marginBottom: '1.5rem', 
-            color: colors.text.primary,
-            fontWeight: 600 
-          }}
-        >
-          Progress Over Time
-        </Typography>
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            marginBottom: '1rem', 
-            color: colors.text.secondary 
-          }}
-        >
-          Leeds CCG vs England Average
-        </Typography>
-        
-        {/* Mock chart area */}
-        <Box 
-          sx={{ 
-            height: '200px', 
-            background: `linear-gradient(45deg, ${colors.background.secondary}, ${colors.secondary.aquamarine}20)`,
-            borderRadius: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: colors.text.secondary,
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Placeholder for actual chart */}
-          <Typography variant="body1" sx={{ fontStyle: 'italic' }}>
-            Chart Component
-          </Typography>
-          
-          {/* Mock trend lines */}
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: '1rem',
-              left: '1rem',
-              right: '1rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'end',
-            }}
-          >
-            {[65, 68, 70, 72, 73].map((value, index) => (
-              <Box
-                key={index}
-                sx={{
-                  width: '12px',
-                  height: `${value}px`,
-                  backgroundColor: colors.primary.pink,
-                  borderRadius: '2px',
-                  opacity: 0.7,
-                }}
-              />
-            ))}
-          </Box>
-        </Box>
-
-        <Box sx={{ marginTop: '1rem', fontSize: '0.75rem', color: colors.text.secondary }}>
-          Latest Performance: 1.6 percentage points below England average
-        </Box>
-      </Box>
-
-      {/* Bottom Right - Supporting Info (Fourth petal) */}
-      <Box
-        sx={{
-          gridColumn: '2 / 3',
-          gridRow: '2 / 2',
-          background: `linear-gradient(135deg, ${colors.secondary.aquamarine}, ${colors.accent.info})`,
-          borderRadius: '0.5rem 2rem 2rem 0.5rem', // Organic shape
-          padding: '2rem',
-          color: 'white',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <Typography variant="h6" sx={{ marginBottom: '1rem', fontWeight: 600 }}>
-          Supporting Families
-        </Typography>
-        
-        <Box sx={{ marginBottom: '1.5rem' }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
-            73
-          </Typography>
-          <Typography variant="body2" sx={{ opacity: 0.9 }}>
-            out of 100 families have positive outcomes
-          </Typography>
-        </Box>
-
+        {/* Bottom Left Petal - Medium */}
         <Box
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: '1rem',
-            padding: '1rem',
-            marginBottom: '1rem',
+            width: '450px',
+            height: '350px',
+            margin: 0,
+            padding: 0,
           }}
         >
-          <Typography variant="body2" sx={{ lineHeight: 1.5 }}>
-            Supporting families through evidence-based practices and community engagement
-          </Typography>
+          <BottomLeftPetal />
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Box
-            sx={{
-              width: '8px',
-              height: '8px',
-              backgroundColor: colors.accent.success,
-              borderRadius: '50%',
-            }}
-          />
-          <Typography variant="caption">
-            Meeting national standards
-          </Typography>
+        {/* Bottom Right Petal - Second Biggest */}
+        <Box
+          sx={{
+            width: '750px',
+            height: '450px',
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          <BottomRightPetal />
         </Box>
       </Box>
     </Box>
