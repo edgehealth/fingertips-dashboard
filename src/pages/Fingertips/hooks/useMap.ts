@@ -1,4 +1,3 @@
-// hooks/useMap.ts
 import { useState, useEffect } from 'react';
 import icbBoundaries from '../../../data/icb-boundaries.json';
 import type { 
@@ -15,44 +14,11 @@ export const useMap = (): MapHookReturn => {
   const [mapBounds, setMapBounds] = useState<MapBounds | null>(null);
   const [loading, setLoading] = useState(true);
 
-
-useEffect(() => {
-  try {
-    const geojson = icbBoundaries as any;
-    const features = geojson.features || [];
-    setGeoData(features);
-    
-    // DEBUG: Log ICB codes from boundary file
-    console.log('=== MAP BOUNDARY DATA ===');
-    console.log('Total ICB features:', features.length);
-    const icbCodes = features.map((f: any) => f.properties.icb23cd);
-    console.log('ALL boundary ICB codes:', icbCodes);
-    console.log('First 10 boundary codes:', icbCodes.slice(0, 10));
-    
-    // Also log the properties to see what fields are available
-    if (features.length > 0) {
-      console.log('Boundary feature properties:', Object.keys(features[0].properties));
-      console.log('Sample boundary feature:', features[0].properties);
-    }
-    
-    // ... rest of your existing code for bounds calculation
-  } catch (error) {
-    console.error('Error loading ICB boundaries:', error);
-    setLoading(false);
-  }
-}, []);
-
   useEffect(() => {
     try {
       const geojson = icbBoundaries as any;
       const features = geojson.features || [];
       setGeoData(features);
-      
-      // DEBUG: Log ICB codes from boundary file
-      console.log('=== MAP BOUNDARY DATA ===');
-      console.log('Total ICB features:', features.length);
-      const icbCodes = features.map((f: any) => f.properties.icb23cd);
-      console.log('ICB codes from boundaries:', icbCodes.slice(0, 10), '...');
       
       // Calculate actual bounds from the GeoJSON data
       let minLng = Infinity, maxLng = -Infinity;
@@ -95,10 +61,8 @@ useEffect(() => {
     const flatten = (arr: any) => {
       if (Array.isArray(arr) && arr.length > 0) {
         if (typeof arr[0] === 'number' && arr.length === 2) {
-          // This is a coordinate pair [lng, lat]
           result.push(arr);
         } else {
-          // This is a nested array, continue flattening
           arr.forEach(flatten);
         }
       }
@@ -116,7 +80,6 @@ useEffect(() => {
     const height = 600;
     
     const x = ((lng - mapBounds.minLng) / (mapBounds.maxLng - mapBounds.minLng)) * width;
-    // Flip Y coordinate for SVG (SVG Y increases downward, lat increases upward)
     const y = height - ((lat - mapBounds.minLat) / (mapBounds.maxLat - mapBounds.minLat)) * height;
     
     return { x, y };
@@ -126,14 +89,13 @@ useEffect(() => {
   const coordinatesToPath = (coordinates: number[][][] | number[][][][]) => {
     const paths: string[] = [];
     
-    // Handle both Polygon and MultiPolygon geometries
     const polygons = coordinates[0] && Array.isArray(coordinates[0][0]) && Array.isArray(coordinates[0][0][0])
-      ? coordinates as number[][][][]  // MultiPolygon: [[[[[lng,lat]]]]]
-      : [coordinates as number[][][]]; // Polygon: [[[lng,lat]]]
+      ? coordinates as number[][][][]
+      : [coordinates as number[][][]];
     
     polygons.forEach(polygon => {
       polygon.forEach((ring, ringIndex) => {
-        if (ring.length < 3) return; // Skip invalid rings
+        if (ring.length < 3) return;
         
         const pathCommands = ring.map(([lng, lat], index) => {
           const { x, y } = projectToSVG(lng, lat);
@@ -151,12 +113,7 @@ useEffect(() => {
 
   // Event handlers
   const handleICBClick = (icbCode: string, icbName: string) => {
-    console.log('=== MAP CLICK ===');
-    console.log('Clicked ICB code:', icbCode);
-    console.log('Clicked ICB name:', icbName);
-    console.log('Previous selectedICB:', selectedICB);
     setSelectedICB(icbCode);
-    console.log('Set selectedICB to:', icbCode);
   };
 
   const handleICBHover = (icbName: string) => {
@@ -170,20 +127,18 @@ useEffect(() => {
   // Get region color based on selection state and data value
   const getRegionColor = (icbCode: string, dataValue?: number, valueRange?: ValueRange) => {
     if (selectedICB === icbCode) {
-      return '#E91E63'; // Pink for selected
+      return '#E91E63';
     }
     
-    // If we have data value and range, create heatmap
     if (dataValue !== undefined && valueRange) {
       const { min, max } = valueRange;
       const normalizedValue = (dataValue - min) / (max - min);
       
-      // Create color gradient from light teal to dark teal
-      const lightness = 85 - (normalizedValue * 35); // 85% to 50% lightness
-      return `hsl(178, 54%, ${lightness}%)`; // HSL for teal with varying lightness
+      const lightness = 85 - (normalizedValue * 35);
+      return `hsl(178, 54%, ${lightness}%)`;
     }
     
-    return '#4ECDC4'; // Default teal
+    return '#4ECDC4';
   };
 
   return {

@@ -16,7 +16,6 @@ interface ICBBarChartProps {
 }
 
 const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
-  // Create chart data using useMemo at the top level
   const chartData = React.useMemo(() => {
     if (!filterState || !filterState.selectedMetric || !filterState.data) {
       return [];
@@ -48,15 +47,15 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
         filtered.filter((item: any) => item.area_code === selectedICB) : [];
 
       // Get unique time periods
-      const timePeriodsSet = new Set(englandData.map((item: any) => (item as any).time_period));
+      const timePeriodsSet = new Set(englandData.map((item: any) => item.time_period));
       const timePeriods = Array.from(timePeriodsSet).sort();
 
       // Create chart data
       const result: any[] = [];
       
       timePeriods.forEach(period => {
-        const englandItem = englandData.find((item: any) => (item as any).time_period === period);
-        const icbItem = icbData.find((item: any) => (item as any).time_period === period);
+        const englandItem = englandData.find((item: any) => item.time_period === period);
+        const icbItem = icbData.find((item: any) => item.time_period === period);
         
         if (englandItem) {
           const dataPoint: any = {
@@ -65,20 +64,12 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
           };
           
           if (icbItem && selectedICB && getAreaName) {
-            const icbName = getAreaName(selectedICB) || 'Selected ICB';
-            console.log('Original ICB name:', icbName);
-            
-            // Use a simple, consistent key for ICB data
             dataPoint['ICB'] = icbItem.value;
-            console.log('Added ICB data:', icbItem.value);
           }
           
           result.push(dataPoint);
         }
       });
-
-      console.log('=== NIVO CHART DATA ===');
-      console.log('Chart data generated:', result);
       
       return result;
     } catch (error) {
@@ -87,21 +78,17 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
     }
   }, [filterState]);
 
-  // Get the keys for the chart (England + ICB name if selected)
   const keys = React.useMemo(() => {
     const baseKeys = ['England'];
     
     if (filterState?.selectedICB && chartData.length > 0) {
-      // Always use 'ICB' as the key when an ICB is selected
       baseKeys.push('ICB');
     }
     
-    console.log('Chart keys:', baseKeys);
-    console.log('Chart data sample:', chartData[0]);
     return baseKeys;
   }, [chartData, filterState?.selectedICB]);
 
-  // Early returns after hooks
+  // Loading states
   if (!filterState) {
     return (
       <Box sx={{ 
@@ -116,8 +103,7 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
     );
   }
 
-  const { selectedMetricDetails, selectedICB, getAreaName, loading } = filterState;
-  const selectedRegionName = (selectedICB && getAreaName) ? getAreaName(selectedICB) : null;
+  const { selectedMetricDetails, loading } = filterState;
 
   if (loading) {
     return (
@@ -178,18 +164,17 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {/* Nivo Bar Chart */}
       <Box sx={{ flex: 1, minHeight: 300 }}>
         <ResponsiveBar
           data={chartData}
           keys={keys}
           indexBy="year"
-          groupMode="grouped" // This makes bars side-by-side instead of stacked
+          groupMode="grouped"
           margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
           padding={0.3}
           valueScale={{ type: 'linear' }}
           indexScale={{ type: 'band', round: true }}
-          colors={['#4ECDC4', '#E91E63']} // Teal for England, Pink for ICB
+          colors={['#4ECDC4', '#E91E63']}
           borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
           axisTop={null}
           axisRight={null}
