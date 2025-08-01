@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import mockData from '../data/mockdata.json'; // Import directly
+import { apiService } from '../services/fingertipsApi';
 
-// Simple types
+// Keep the original simple interface
 export interface NHSDataPoint {
   area_code: string;
   area_name: string;
   value: number;
   indicator_name: string;
-  time_period: string; // Add this field
+  time_period: string;
 }
 
 export interface NHSContextType {
@@ -25,23 +25,26 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = () => {
+    const loadData = async () => {
       try {
-        console.log('Loaded mock data:', mockData); // Debug log
+        console.log('Fetching data from API...');
+        const response = await apiService.getIndicatorData();
         
-        // Transform the data to include time_period
-        const transformedData: NHSDataPoint[] = mockData.data.map((item: any) => ({
+        console.log('API response:', response);
+        
+        // Transform API data to match the original mockdata structure
+        const transformedData: NHSDataPoint[] = response.data.map((item: any) => ({
           area_code: item.area_code,
           area_name: item.area_name,
           value: item.value,
           indicator_name: item.indicator_name,
-          time_period: item.time_period || 'Unknown', // Include time_period
+          time_period: item.time_period,
         }));
         
-        console.log('Transformed data:', transformedData); // Debug log
+        console.log('Transformed data:', transformedData);
         setData(transformedData);
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Error loading data from API:', error);
       } finally {
         setLoading(false);
       }
