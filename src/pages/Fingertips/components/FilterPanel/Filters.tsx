@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  Box, 
-  FormControl, 
-  Select, 
-  MenuItem, 
+import {
+  Box,
+  FormControl,
+  Select,
+  MenuItem,
   Typography,
-  SelectChangeEvent 
+  SelectChangeEvent
 } from '@mui/material';
 
 interface MetricOption {
@@ -15,7 +15,7 @@ interface MetricOption {
 
 interface MetricFilterProps {
   availableMetrics: MetricOption[];
-  selectedMetric: string | null;
+  selectedMetric: string | null | undefined;
   onMetricChange: (metricId: string) => void;
 }
 
@@ -77,8 +77,8 @@ const MetricFilter: React.FC<MetricFilterProps> = ({
             <em>Choose a metric...</em>
           </MenuItem>
           {availableMetrics.map((metric) => (
-            <MenuItem 
-              key={metric.id} 
+            <MenuItem
+              key={metric.id}
               value={metric.id}
               sx={{
                 fontSize: '14px',
