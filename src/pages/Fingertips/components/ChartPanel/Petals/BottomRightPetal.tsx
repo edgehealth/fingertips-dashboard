@@ -81,18 +81,15 @@ const BottomRightPetal: React.FC<BottomRightPetalProps> = ({ filterState }) => {
           justifyContent: 'center',
         }}
       >
-        {/* Bar Chart Component with error boundary */}
+        {/* Bar Chart Component */}
         <Box
           sx={{
             width: '100%',
             height: '100%',
             maxWidth: '500px',
             maxHeight: '350px',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(78, 205, 196, 0.3)',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            marginRight: '250px',
+            backgroundColor: 'transparent',
+            marginRight: '200px',
           }}
         >
           <ErrorBoundary>

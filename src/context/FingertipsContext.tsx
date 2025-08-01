@@ -7,6 +7,7 @@ export interface NHSDataPoint {
   area_name: string;
   value: number;
   indicator_name: string;
+  time_period: string; // Add this field
 }
 
 export interface NHSContextType {
@@ -28,12 +29,13 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       try {
         console.log('Loaded mock data:', mockData); // Debug log
         
-        // Transform the data to simple format
+        // Transform the data to include time_period
         const transformedData: NHSDataPoint[] = mockData.data.map((item: any) => ({
           area_code: item.area_code,
           area_name: item.area_name,
           value: item.value,
           indicator_name: item.indicator_name,
+          time_period: item.time_period || 'Unknown', // Include time_period
         }));
         
         console.log('Transformed data:', transformedData); // Debug log

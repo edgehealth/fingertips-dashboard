@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ResponsiveBar } from '@nivo/bar';
 
 interface FilterState {
   selectedMetricDetails?: { id: string; name: string } | null;
@@ -66,14 +66,18 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
           
           if (icbItem && selectedICB && getAreaName) {
             const icbName = getAreaName(selectedICB) || 'Selected ICB';
-            dataPoint[icbName] = icbItem.value;
+            console.log('Original ICB name:', icbName);
+            
+            // Use a simple, consistent key for ICB data
+            dataPoint['ICB'] = icbItem.value;
+            console.log('Added ICB data:', icbItem.value);
           }
           
           result.push(dataPoint);
         }
       });
 
-      console.log('=== BAR CHART DATA ===');
+      console.log('=== NIVO CHART DATA ===');
       console.log('Chart data generated:', result);
       
       return result;
@@ -82,6 +86,20 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       return [];
     }
   }, [filterState]);
+
+  // Get the keys for the chart (England + ICB name if selected)
+  const keys = React.useMemo(() => {
+    const baseKeys = ['England'];
+    
+    if (filterState?.selectedICB && chartData.length > 0) {
+      // Always use 'ICB' as the key when an ICB is selected
+      baseKeys.push('ICB');
+    }
+    
+    console.log('Chart keys:', baseKeys);
+    console.log('Chart data sample:', chartData[0]);
+    return baseKeys;
+  }, [chartData, filterState?.selectedICB]);
 
   // Early returns after hooks
   if (!filterState) {
@@ -155,86 +173,71 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
   return (
     <Box sx={{ 
       width: '100%', 
-      height: '100%', 
-      padding: '16px',
+      height: '100%',
+      backgroundColor: 'transparent',
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {/* Title */}
-      <Typography
-        variant="h6"
-        sx={{
-          color: '#2C3E50',
-          fontWeight: 600,
-          fontSize: '16px',
-          marginBottom: '8px',
-          textAlign: 'center'
-        }}
-      >
-        {selectedICB ? `${selectedRegionName} vs England` : 'England Trend'}
-      </Typography>
-      
-      <Typography
-        variant="body2"
-        sx={{
-          color: '#666',
-          fontSize: '12px',
-          marginBottom: '16px',
-          textAlign: 'center'
-        }}
-      >
-        {selectedMetricDetails.name}
-      </Typography>
-
-      {/* Chart */}
-      <Box sx={{ flex: 1, minHeight: 0 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="year" 
-              stroke="#666"
-              fontSize={10}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-            />
-            <YAxis 
-              stroke="#666"
-              fontSize={11}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              }}
-              formatter={(value: any, name: string) => [
-                (typeof value === 'number' && !isNaN(value)) ? value.toFixed(1) : 'No data', 
-                name
-              ]}
-            />
-            <Legend />
-            <Bar 
-              dataKey="England" 
-              fill="#4ECDC4" 
-              name="England"
-              radius={[2, 2, 0, 0]}
-            />
-            {selectedICB && selectedRegionName && (
-              <Bar 
-                dataKey={selectedRegionName} 
-                fill="#E91E63" 
-                name={selectedRegionName}
-                radius={[2, 2, 0, 0]}
-              />
-            )}
-          </BarChart>
-        </ResponsiveContainer>
+      {/* Nivo Bar Chart */}
+      <Box sx={{ flex: 1, minHeight: 300 }}>
+        <ResponsiveBar
+          data={chartData}
+          keys={keys}
+          indexBy="year"
+          groupMode="grouped" // This makes bars side-by-side instead of stacked
+          margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
+          padding={0.3}
+          valueScale={{ type: 'linear' }}
+          indexScale={{ type: 'band', round: true }}
+          colors={['#4ECDC4', '#E91E63']} // Teal for England, Pink for ICB
+          borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+          axisTop={null}
+          axisRight={null}
+          axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: -45,
+            legend: '',
+            legendPosition: 'middle',
+            legendOffset: 40
+          }}
+          axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: '',
+            legendPosition: 'middle',
+            legendOffset: -40
+          }}
+          labelSkipWidth={12}
+          labelSkipHeight={12}
+          labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+          legends={[
+            {
+              dataFrom: 'keys',
+              anchor: 'bottom-right',
+              direction: 'column',
+              justify: false,
+              translateX: 120,
+              translateY: 0,
+              itemsSpacing: 2,
+              itemWidth: 100,
+              itemHeight: 20,
+              itemDirection: 'left-to-right',
+              itemOpacity: 0.85,
+              symbolSize: 20,
+              effects: [
+                {
+                  on: 'hover',
+                  style: {
+                    itemOpacity: 1
+                  }
+                }
+              ]
+            }
+          ]}
+          animate={true}
+        />
       </Box>
     </Box>
   );
