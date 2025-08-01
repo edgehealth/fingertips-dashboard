@@ -32,7 +32,7 @@ export const useFilter = () => {
     }
   }, [availableMetrics, selectedMetric]);
 
-  // Get filtered data for current selections (for heatmap) - FIXED FOR MULTIPLE TIME PERIODS
+  // Get filtered data for current selections (for heatmap)
   const filteredData = useMemo(() => {
     if (!selectedMetric) return {};
     
@@ -129,7 +129,7 @@ export const useFilter = () => {
 
   return {
     // Data
-    data, // Raw data for bar chart
+    data,
     filteredData,
     
     // Selections

@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../services/fingertipsApi';
 
-// Keep the original simple interface
 export interface NHSDataPoint {
   area_code: string;
   area_name: string;
@@ -27,12 +26,8 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('Fetching data from API...');
         const response = await apiService.getIndicatorData();
         
-        console.log('API response:', response);
-        
-        // Transform API data to match the original mockdata structure
         const transformedData: NHSDataPoint[] = response.data.map((item: any) => ({
           area_code: item.area_code,
           area_name: item.area_name,
@@ -41,7 +36,6 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           time_period: item.time_period,
         }));
         
-        console.log('Transformed data:', transformedData);
         setData(transformedData);
       } catch (error) {
         console.error('Error loading data from API:', error);
@@ -65,7 +59,6 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   );
 };
 
-// Export useNHSData hook AFTER the provider
 export const useNHSData = () => {
   const context = useContext(NHSContext);
   if (!context) {
