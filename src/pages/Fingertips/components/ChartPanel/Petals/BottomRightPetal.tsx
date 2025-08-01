@@ -1,16 +1,18 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import ICBBarChart from '../Charts/ICBBarChart';
+import { FilterState } from '../../../../../types/types'; // Adjust the import path as necessary
+
 
 // Define the type for the filter state with optional properties for safety
-interface FilterState {
-  selectedMetricDetails?: { id: string; name: string } | null;
-  selectedICB?: string | null;
-  barChartData?: any[];
-  getAreaName?: (areaCode: string) => string | undefined;
-  loading?: boolean;
-  // Add other properties as needed
-}
+//interface FilterState {
+//  selectedMetricDetails?: { id: string; name: string } | null;
+//  selectedICB?: string | null;
+//  barChartData?: any[];
+//  getAreaName?: (areaCode: string) => string | undefined;
+//  loading?: boolean;
+//  // Add other properties as needed
+//}
 
 interface BottomRightPetalProps {
   filterState?: FilterState;
@@ -18,7 +20,7 @@ interface BottomRightPetalProps {
 
 const BottomRightPetal: React.FC<BottomRightPetalProps> = ({ filterState }) => {
   const [petalImage, setPetalImage] = React.useState<string>('');
-  
+
   React.useEffect(() => {
     import('../../../../../assets/bottom-right-petal.png')
       .then((imageModule) => {
@@ -32,9 +34,9 @@ const BottomRightPetal: React.FC<BottomRightPetalProps> = ({ filterState }) => {
   // Add safety check for filterState
   if (!filterState) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary'
@@ -122,9 +124,9 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <Box sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
           color: 'text.secondary',

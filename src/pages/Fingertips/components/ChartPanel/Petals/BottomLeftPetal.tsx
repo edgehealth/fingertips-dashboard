@@ -1,9 +1,11 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import src from '@emotion/styled/dist/declarations/src';
 
 const BottomLeftPetal: React.FC = () => {
   const [petalImage, setPetalImage] = React.useState<string>('');
-  
+  const [tomImage, setTomImage] = React.useState<string>('');
+
   React.useEffect(() => {
     import('../../../../../assets/bottom-left-petal.png')
       .then((imageModule) => {
@@ -11,6 +13,16 @@ const BottomLeftPetal: React.FC = () => {
       })
       .catch((error) => {
         console.error('Failed to load bottom-left-petal.png:', error);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    import('../../../../../assets/tired-tom.png')
+      .then((imageModule) => {
+        setTomImage(imageModule.default);
+      })
+      .catch((error) => {
+        console.error('Failed to load tired-tom.png:', error);
       });
   }, []);
 
@@ -49,11 +61,36 @@ const BottomLeftPetal: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          overflow: 'hidden',
+          position: 'relative',
         }}
       >
-        {/* Your population visualization goes here */}
+        {tomImage && petalImage && (
+          <Box
+            component="img"
+            src={tomImage}
+            alt="Tired Tom"
+            sx={{
+              maxWidth: '114%',
+              maxHeight: '108%',
+              objectFit: 'cover',
+              mb: 'auto',
+              display: 'block',
+              WebkitMaskImage: `url(${petalImage})`,
+              maskImage: `url(${petalImage})`,
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskPosition: 'top',
+              maskPosition: 'top',
+              position: 'relative',
+              top: '-19px', // Move image up by 20px
+            }}
+          />
+        )}
       </Box>
-    </Box>
+    </Box >
   );
 };
 

@@ -110,3 +110,24 @@ export interface MetricFilterProps {
   selectedMetric: string | null;
   onMetricChange: (metricId: string) => void;
 }
+
+export interface FilterState {
+  selectedMetricDetails?: { id: string; name: string } | null;
+  selectedICB?: string | null;
+  data?: any[];
+  selectedMetric?: string | null | undefined;
+  getAreaName?: (areaCode: string) => string | undefined;
+  loading?: boolean;
+  availableMetrics: { id: string; name: string }[];
+  setSelectedMetric: (metric: string) => void;
+}
+
+export interface MapFilterState {
+  getValueForArea: (areaCode: string) => number | undefined;
+  valueRange: { min: number; max: number } | null;
+  selectedMetric: string | null;
+  selectedICB: string | null;
+  handleICBClick: (icbCode: string, icbName: string) => void;
+  handleICBHover: (icbName: string) => void;
+  handleICBLeave: () => void;
+}

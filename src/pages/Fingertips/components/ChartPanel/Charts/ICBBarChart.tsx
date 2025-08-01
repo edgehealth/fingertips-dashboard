@@ -1,15 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { ResponsiveBar } from '@nivo/bar';
-
-interface FilterState {
-  selectedMetricDetails?: { id: string; name: string } | null;
-  selectedICB?: string | null;
-  data?: any[];
-  selectedMetric?: string | null;
-  getAreaName?: (areaCode: string) => string | undefined;
-  loading?: boolean;
-}
+import { FilterState } from '../../../../../types/types'; // Adjust the import path as necessary
 
 interface ICBBarChartProps {
   filterState?: FilterState;
@@ -25,8 +17,8 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
 
     try {
       // Filter data for the selected metric
-      const filtered = data.filter((item: any) => 
-        item && 
+      const filtered = data.filter((item: any) =>
+        item &&
         item.indicator_name === selectedMetric &&
         item.value !== undefined &&
         item.value !== null &&
@@ -34,16 +26,16 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       );
 
       // Get England data
-      const englandData = filtered.filter((item: any) => 
+      const englandData = filtered.filter((item: any) =>
         item.area_name && (
-          item.area_name.toLowerCase().includes('england') || 
+          item.area_name.toLowerCase().includes('england') ||
           item.area_code === 'E92000001' ||
           item.area_name === 'England'
         )
       );
 
       // Get ICB data if selected
-      const icbData = selectedICB ? 
+      const icbData = selectedICB ?
         filtered.filter((item: any) => item.area_code === selectedICB) : [];
 
       // Get unique time periods
@@ -52,25 +44,25 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
 
       // Create chart data
       const result: any[] = [];
-      
+
       timePeriods.forEach(period => {
         const englandItem = englandData.find((item: any) => item.time_period === period);
         const icbItem = icbData.find((item: any) => item.time_period === period);
-        
+
         if (englandItem) {
           const dataPoint: any = {
             year: period,
             England: englandItem.value,
           };
-          
+
           if (icbItem && selectedICB && getAreaName) {
             dataPoint['ICB'] = icbItem.value;
           }
-          
+
           result.push(dataPoint);
         }
       });
-      
+
       return result;
     } catch (error) {
       console.error('Error creating chart data:', error);
@@ -80,20 +72,20 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
 
   const keys = React.useMemo(() => {
     const baseKeys = ['England'];
-    
+
     if (filterState?.selectedICB && chartData.length > 0) {
       baseKeys.push('ICB');
     }
-    
+
     return baseKeys;
   }, [chartData, filterState?.selectedICB]);
 
   // Loading states
   if (!filterState) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary'
@@ -107,9 +99,9 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary'
@@ -121,9 +113,9 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
 
   if (!selectedMetricDetails) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary'
@@ -137,10 +129,10 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
 
   if (chartData.length === 0) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
+      <Box sx={{
+        display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary',
@@ -157,8 +149,8 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
   }
 
   return (
-    <Box sx={{ 
-      width: '100%', 
+    <Box sx={{
+      width: '100%',
       height: '100%',
       backgroundColor: 'transparent',
       display: 'flex',

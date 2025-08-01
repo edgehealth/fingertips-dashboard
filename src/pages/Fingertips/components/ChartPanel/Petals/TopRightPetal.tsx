@@ -1,15 +1,17 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import MetricFilter from '../../FilterPanel/Filters';
+import { FilterState } from '../../../../../types/types'; // Adjust the import path as necessary
 
-// Define the type for the filter state
-interface FilterState {
-  availableMetrics: { id: string; name: string }[];
-  selectedMetric: string | null;
-  setSelectedMetric: (metric: string) => void;
-  loading: boolean;
-  // Add other properties as needed
-}
+
+//// Define the type for the filter state
+//interface FilterState {
+//  availableMetrics: { id: string; name: string }[];
+//  selectedMetric: string | null;
+//  setSelectedMetric: (metric: string) => void;
+//  loading: boolean;
+//  // Add other properties as needed
+//}
 
 interface TopRightPetalProps {
   filterState: FilterState;
@@ -17,7 +19,7 @@ interface TopRightPetalProps {
 
 const TopRightPetal: React.FC<TopRightPetalProps> = ({ filterState }) => {
   const [petalImage, setPetalImage] = React.useState<string>('');
-  
+
   const {
     availableMetrics,
     selectedMetric,
@@ -28,7 +30,7 @@ const TopRightPetal: React.FC<TopRightPetalProps> = ({ filterState }) => {
   console.log('TopRightPetal - availableMetrics:', availableMetrics);
   console.log('TopRightPetal - selectedMetric:', selectedMetric);
   console.log('TopRightPetal - loading:', loading);
-     
+
   React.useEffect(() => {
     import('../../../../../assets/top-right-petal.png')
       .then((imageModule) => {

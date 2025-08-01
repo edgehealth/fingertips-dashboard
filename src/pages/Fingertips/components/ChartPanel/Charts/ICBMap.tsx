@@ -1,19 +1,11 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useMap } from '../../../../Fingertips/hooks/useMap';
+import { MapFilterState } from '../../../../../types/types'; // Adjust the import path as necessary
 
-interface FilterState {
-  getValueForArea: (areaCode: string) => number | undefined;
-  valueRange: { min: number; max: number } | null;
-  selectedMetric: string | null;
-  selectedICB: string | null;
-  handleICBClick: (icbCode: string, icbName: string) => void;
-  handleICBHover: (icbName: string) => void;
-  handleICBLeave: () => void;
-}
 
 interface ICBMapProps {
-  filterState: FilterState;
+  filterState: MapFilterState;
 }
 
 const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
@@ -27,9 +19,9 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
     handleICBLeave: mapLeave,
   } = useMap();
 
-  const { 
-    getValueForArea, 
-    valueRange, 
+  const {
+    getValueForArea,
+    valueRange,
     selectedICB,
     handleICBClick,
   } = filterState;
@@ -38,47 +30,47 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
     if (selectedICB === icbCode) {
       return '#E91E63'; // Pink for selected
     }
-    
+
     if (!getValueForArea || !icbCode) {
       return '#E0E0E0'; // Light gray for no data
     }
-    
+
     const dataValue = getValueForArea(icbCode);
-    
+
     if (dataValue === undefined || dataValue === null || isNaN(dataValue)) {
       return '#E0E0E0';
     }
-    
-    if (!valueRange || 
-        typeof valueRange.min !== 'number' || 
-        typeof valueRange.max !== 'number' ||
-        isNaN(valueRange.min) || 
-        isNaN(valueRange.max)) {
+
+    if (!valueRange ||
+      typeof valueRange.min !== 'number' ||
+      typeof valueRange.max !== 'number' ||
+      isNaN(valueRange.min) ||
+      isNaN(valueRange.max)) {
       return '#4ECDC4';
     }
-    
+
     const { min, max } = valueRange;
-    
+
     if (max <= min) {
       return '#4ECDC4';
     }
-    
+
     const normalizedValue = (dataValue - min) / (max - min);
     const clampedValue = Math.max(0, Math.min(1, normalizedValue));
-    
+
     // Create smooth color gradient using HSL
-    const hue = 240 - (clampedValue * 240); 
+    const hue = 240 - (clampedValue * 240);
     const saturation = 70;
     const lightness = 60 - (clampedValue * 20);
-    
+
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
   if (loading) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary'
@@ -90,9 +82,9 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
 
   if (!mapBounds || geoData.length === 0) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         color: 'text.secondary'
@@ -106,13 +98,13 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
   const selectedName = selectedRegion?.properties.icb23nm || '';
 
   return (
-    <div style={{ 
-      width: '100%', 
-      height: '100%', 
-      display: 'flex', 
-      flexDirection: 'column' 
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column'
     }}>
-      
+
       <div style={{ flex: 1, position: 'relative' }}>
         {hoveredICB && (
           <div style={{
@@ -135,11 +127,11 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
               const hoveredRegion = geoData.find(f => f.properties.icb23nm === hoveredICB);
               const hoveredCode = hoveredRegion?.properties.icb23cd;
               const hoveredValue = hoveredCode && getValueForArea ? getValueForArea(hoveredCode) : undefined;
-              
+
               if (hoveredValue !== undefined && hoveredValue !== null && !isNaN(hoveredValue)) {
-                return <div style={{fontSize: '10px', opacity: 0.8}}>Value: {hoveredValue.toFixed(1)}</div>;
+                return <div style={{ fontSize: '10px', opacity: 0.8 }}>Value: {hoveredValue.toFixed(1)}</div>;
               } else {
-                return <div style={{fontSize: '10px', opacity: 0.8}}>No data available</div>;
+                return <div style={{ fontSize: '10px', opacity: 0.8 }}>No data available</div>;
               }
             })()}
           </div>
@@ -156,9 +148,9 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
             const pathData = coordinatesToPath(feature.geometry.coordinates);
             const icbCode = feature.properties.icb23cd;
             const icbName = feature.properties.icb23nm;
-            
+
             if (!pathData) return null;
-            
+
             return (
               <path
                 key={`${icbCode}-${index}`}
@@ -166,7 +158,7 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
                 fill={getRegionColor(icbCode)}
                 stroke="#2C3E50"
                 strokeWidth="0.5"
-                style={{ 
+                style={{
                   cursor: 'pointer',
                   transition: 'fill 0.2s ease, opacity 0.2s ease',
                   opacity: hoveredICB && hoveredICB !== icbName ? 0.7 : 1,
