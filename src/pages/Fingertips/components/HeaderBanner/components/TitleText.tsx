@@ -8,10 +8,9 @@ interface TitleTextProps {
 }
 
 const TitleText: React.FC<TitleTextProps> = ({ 
-  mainTitle = "Edge Health",
+  mainTitle = "Egde Health",
   subtitle = "Women & Children's Health"
-}) => {
-  return (
+
     <Box
       sx={{
         backgroundColor: colors.primary.darkBlue,
