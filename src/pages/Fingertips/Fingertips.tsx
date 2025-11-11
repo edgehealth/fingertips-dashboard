@@ -7,15 +7,22 @@ const Fingertips: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '120vh',
+        minHeight: '100vh', // Changed from 120vh - now fits in viewport
+        height: '100vh', // Added to constrain to viewport
         backgroundColor: '#f0e0fb',
-        padding: '1rem',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden', // Prevent scrolling
       }}
     >
       <HeaderContainer />
       <Box
         sx={{
-          padding: '1.5rem',
+          flex: 1, // Take remaining space after header
+          padding: { xs: '0.5rem', md: '1.5rem' },
+          overflow: 'auto', // Allow scrolling only in this section if needed
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <ChartPanel />

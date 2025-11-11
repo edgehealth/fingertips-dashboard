@@ -113,7 +113,7 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
       flexDirection: 'column' 
     }}>
       
-      <div style={{ flex: 1, position: 'relative' }}>
+      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
         {hoveredICB && (
           <div style={{
             position: 'absolute',
@@ -123,11 +123,11 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: 'white',
             padding: '6px 12px',
-            fontSize: '14px',
+            fontSize: '12px',
             borderRadius: '4px',
             zIndex: 1000,
             pointerEvents: 'none',
-            maxWidth: '200px',
+            maxWidth: '180px',
             textAlign: 'center'
           }}>
             {hoveredICB}
@@ -147,10 +147,10 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
 
         <svg
           width="100%"
-          height="100%"
-          viewBox="0 0 500 600"
+          height="90%"
+          viewBox="0 50 500 500"
           preserveAspectRatio="xMidYMid meet"
-          style={{ background: 'transparent' }}
+          style={{ background: 'transparent', display: 'block' }}
         >
           {geoData.map((feature, index) => {
             const pathData = coordinatesToPath(feature.geometry.coordinates);
@@ -182,15 +182,15 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
 
       <div style={{
         textAlign: 'center',
-        padding: '8px 0',
-        minHeight: '24px'
+        minHeight: '20px',
+        flexShrink: 0
       }}>
         <Typography
           variant="body2"
           sx={{
             color: selectedICB ? '#E91E63' : '#666',
             fontWeight: selectedICB ? 600 : 400,
-            fontSize: selectedICB ? '16px' : '14px',
+            fontSize: { xs: '12px', md: '13px' },
             fontStyle: selectedICB ? 'normal' : 'italic',
           }}
         >
