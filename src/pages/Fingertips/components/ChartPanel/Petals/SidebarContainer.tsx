@@ -1,9 +1,9 @@
-// Containers/SidebarContainer.tsx
+// Containers/SidebarContainer.tsx - Task 2: Move legend to header
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MetricFilter from '../../FilterPanel/Filters';
-import ICBLineChart from '../Charts/ICBBarChart';
+import ICBLineChart from '../Charts/ICBLineChart';
 import YearSlider from '../SharedComponents/YearSlider';
 
 interface FilterState {
@@ -33,7 +33,12 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
     availableYears = [],
     selectedYear,
     setSelectedYear,
+    selectedICB,
+    getAreaName,
   } = filterState;
+
+  // Get ICB name for legend
+  const icbName = selectedICB && getAreaName ? getAreaName(selectedICB) : null;
 
   return (
     <Box
@@ -42,7 +47,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
         flexDirection: 'column',
         gap: { xs: '0.75rem', md: '1rem' },
         height: '100%',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}
     >
       {/* Top Section - Controls */}
@@ -57,7 +62,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           minHeight: { xs: '250px', md: '280px' },
           maxHeight: { xs: '320px', md: '350px' },
           transition: 'all 0.3s ease',
-          overflow: 'hidden',
+          overflow: 'visible',
           display: 'flex',
           flexDirection: 'column',
           '&:hover': {
@@ -66,7 +71,6 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           },
         }}
       >
-        {/* Header */}
         <Box
           sx={{
             display: 'flex',
@@ -99,7 +103,6 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           />
         </Box>
 
-        {/* Metric Filter */}
         <Box sx={{ width: '100%', flexShrink: 0 }}>
           <MetricFilter
             availableMetrics={availableMetrics}
@@ -108,7 +111,6 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           />
         </Box>
 
-        {/* Year Slider */}
         {availableYears.length > 0 && selectedYear && setSelectedYear && (
           <Box sx={{ width: '100%', flexShrink: 0, mt: 2 }}>
             <YearSlider
@@ -132,7 +134,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           display: 'flex',
           flexDirection: 'column',
           minHeight: 0,
-          overflow: 'hidden',
+          overflow: 'visible',
           transition: 'all 0.3s ease',
           '&:hover': {
             transform: 'translateY(-2px)',
@@ -140,7 +142,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           },
         }}
       >
-        {/* Header */}
+        {/* Header with Legend */}
         <Box
           sx={{
             display: 'flex',
@@ -149,28 +151,59 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             flexShrink: 0,
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{
-              color: '#2C3E50',
-              fontWeight: 600,
-              fontSize: { xs: '14px', md: '16px' },
-            }}
-          >
-            Comparison to England
-          </Typography>
-          <InfoOutlinedIcon
-            sx={{
-              color: '#6c63ff',
-              cursor: 'help',
-              fontSize: { xs: '16px', md: '18px' },
-              marginLeft: '8px',
-              '&:hover': {
-                color: '#5850d6',
-              },
-            }}
-            titleAccess="Compare selected ICB performance against the England average"
-          />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                color: '#2C3E50',
+                fontWeight: 600,
+                fontSize: { xs: '14px', md: '16px' },
+              }}
+            >
+              Comparison to England
+            </Typography>
+            <InfoOutlinedIcon
+              sx={{
+                color: '#6c63ff',
+                cursor: 'help',
+                fontSize: { xs: '16px', md: '18px' },
+                '&:hover': {
+                  color: '#5850d6',
+                },
+              }}
+              titleAccess="Compare selected ICB performance against the England average"
+            />
+          </Box>
+
+          {/* Legend - Moved here */}
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', marginLeft: '20px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box
+                sx={{
+                  width: 16,
+                  height: 3,
+                  backgroundColor: '#4ECDC4',
+                  borderRadius: 1,
+                }}
+              />
+              <Typography variant="caption" sx={{ fontSize: '11px', color: '#666' }}>
+                England
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Box
+                  sx={{
+                    width: 16,
+                    height: 3,
+                    backgroundColor: '#E91E63',
+                    borderRadius: 1,
+                  }}
+                />
+                <Typography variant="caption" sx={{ fontSize: '11px', color: '#666' }}>
+                  Selected ICB
+                </Typography>
+              </Box>
+          </Box>
         </Box>
 
         {/* Chart */}
@@ -181,7 +214,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             alignItems: 'center',
             justifyContent: 'center',
             minHeight: 0,
-            overflow: 'hidden',
+            overflow: 'visible',
           }}
         >
           <ICBLineChart filterState={filterState} />

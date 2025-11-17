@@ -2,7 +2,7 @@
 import React from 'react';
 import { Box, Slider, Typography } from '@mui/material';
 import type { YearSliderProps } from '../../../../../types/types';
-import { sortTimePeriodsDescending } from '../../../utils/dateUtils';
+import { sortTimePeriodsAscending } from '../../../utils/dateUtils';
 
 const YearSlider: React.FC<YearSliderProps> = ({
   availableYears,
@@ -11,7 +11,7 @@ const YearSlider: React.FC<YearSliderProps> = ({
 }) => {
   // Sort years using shared utility - MUST be before any conditional returns
   const sortedYears = React.useMemo(() => 
-    sortTimePeriodsDescending(availableYears), 
+    sortTimePeriodsAscending(availableYears), 
     [availableYears]
   );
 
@@ -126,11 +126,12 @@ const YearSlider: React.FC<YearSliderProps> = ({
           px: 1,
         }}
       >
+        
         <Typography variant="caption" sx={{ color: '#999', fontSize: '9px' }}>
-          {sortedYears[sortedYears.length - 1]} (Earliest)
+          {sortedYears[0]} (Earliest)
         </Typography>
         <Typography variant="caption" sx={{ color: '#999', fontSize: '9px' }}>
-          {sortedYears[0]} (Latest)
+          {sortedYears[sortedYears.length - 1]} (Latest)
         </Typography>
       </Box>
     </Box>

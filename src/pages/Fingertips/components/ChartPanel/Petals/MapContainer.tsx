@@ -1,9 +1,10 @@
-// MapContainer.tsx
+// MapContainer.tsx - Task 3: Using extracted legend component
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import FreshICBMap from '../Charts/ICBMap';
 import MetricCard from '../SharedComponents/MetricCard';
+import MapColorLegend from '../Charts/MapColorLegend';
 
 interface FilterState {
   selectedMetricDetails: { id: string; name: string } | null;
@@ -84,15 +85,16 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
             color: '#6c63ff',
             cursor: 'help',
             fontSize: '20px',
+            marginLeft: '8px',
             '&:hover': {
               color: '#5850d6',
             },
           }}
           titleAccess="Click on any Integrated Care Board to view detailed metrics. Colors represent performance relative to England average."
         />
-       
       </Box>
-       {/* Metric Name - NEW LOCATION */}
+
+      {/* Metric Name */}
       {selectedMetricDetails && (
         <Box
           sx={{
@@ -102,15 +104,15 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
           }}
         >
           <Typography
-          variant="h1"
-          sx={{
-            color: '#2C3E50',
-            fontWeight: 600,
-            fontSize: '18px',
-          }}
-        >
-          {selectedMetric}
-        </Typography>
+            variant="h1"
+            sx={{
+              color: '#2C3E50',
+              fontWeight: 600,
+              fontSize: '18px',
+            }}
+          >
+            {selectedMetric}
+          </Typography>
         </Box>
       )}
 
@@ -143,110 +145,12 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
             />
           </Box>
 
-          {/* Color Legend */}
-          <Box 
-  sx={{ 
-    p: 2, 
-    backgroundColor: '#f8f9fa', 
-    borderRadius: '12px',
-    border: '1px solid rgba(78, 205, 196, 0.2)',
-  }}
->
-  <Typography 
-    variant="caption" 
-    sx={{ 
-      fontWeight: 600, 
-      display: 'block', 
-      mb: 1.5,
-      color: '#2C3E50',
-      fontSize: '12px',
-    }}
-  >
-    Map Color Scale
-  </Typography>
-  
-  {valueRange && valueRange.min !== null && valueRange.max !== null ? (
-    <>
-      {/* Gradient Bar - MATCHES the fixed HSL gradient exactly */}
-      <Box sx={{ mb: 1 }}>
-        <Box sx={{ 
-          width: '100%', 
-          height: '14px', 
-          background: 'linear-gradient(to right, hsl(195, 65%, 75%), hsl(195, 65%, 57.5%), hsl(195, 65%, 40%))',
-          borderRadius: '6px',
-          border: '1px solid rgba(0,0,0,0.1)',
-        }} />
-      </Box>
-      
-      {/* Min/Max Values for THIS metric */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        mb: 0.5,
-        px: 0.5,
-      }}>
-        <Box sx={{ textAlign: 'left' }}>
-          <Typography variant="caption" sx={{ fontSize: '13px', fontWeight: 700, color: '#2C3E50', display: 'block' }}>
-            {valueRange.min.toFixed(1)}
-          </Typography>
-          <Typography variant="caption" sx={{ fontSize: '9px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Lowest
-          </Typography>
-        </Box>
-        <Box sx={{ textAlign: 'right' }}>
-          <Typography variant="caption" sx={{ fontSize: '13px', fontWeight: 700, color: '#2C3E50', display: 'block' }}>
-            {valueRange.max.toFixed(1)}
-          </Typography>
-          <Typography variant="caption" sx={{ fontSize: '9px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Highest
-          </Typography>
-        </Box>
-      </Box>
-      
-      {/* Explanation */}
-      <Typography 
-        variant="caption" 
-        sx={{ 
-          fontSize: '10px', 
-          color: '#666',
-          display: 'block',
-          mt: 1.5,
-          lineHeight: 1.4,
-          textAlign: 'center',
-        }}
-      >
-        Lighter = lower values, darker = higher values within this metric's range
-      </Typography>
-    </>
-  ) : (
-    <Typography variant="caption" sx={{ color: '#999', fontStyle: 'italic', fontSize: '11px' }}>
-      Select a metric to view scale
-    </Typography>
-  )}
-  
-  {/* Selected ICB Indicator */}
-  {selectedICB && (
-    <Box sx={{ 
-      mt: 2, 
-      pt: 2, 
-      borderTop: '1px solid rgba(0,0,0,0.1)',
-      display: 'flex',
-      alignItems: 'center',
-      gap: 1,
-    }}>
-      <Box sx={{
-        width: '16px',
-        height: '16px',
-        backgroundColor: '#E91E63',
-        borderRadius: '4px',
-        border: '1px solid rgba(0,0,0,0.1)',
-      }} />
-      <Typography variant="caption" sx={{ fontSize: '11px', color: '#666' }}>
-        Selected ICB
-      </Typography>
-    </Box>
-  )}
-</Box>
+          {/* Color Legend - Now extracted component with pink indicator */}
+          <MapColorLegend
+            valueRange={valueRange}
+            selectedICB={selectedICB}
+            selectedICBValue={currentValue}
+          />
         </Box>
 
         {/* Map - Takes remaining space */}

@@ -25,7 +25,6 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
     const { data, selectedMetric, selectedICB, getAreaName } = filterState;
 
     try {
-      // Filter data for the selected metric
       const filtered = data.filter((item: any) => 
         item && 
         item.indicator_name === selectedMetric &&
@@ -34,7 +33,6 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         !isNaN(item.value)
       );
 
-      // Get England data
       const englandData = filtered.filter((item: any) => 
         item.area_name && (
           item.area_name.toLowerCase().includes('england') || 
@@ -43,18 +41,14 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         )
       );
 
-      // Get ICB data if selected
       const icbData = selectedICB ? 
         filtered.filter((item: any) => item.area_code === selectedICB) : [];
 
-      // Get unique time periods and sort them using shared utility
       const timePeriodsSet = new Set(englandData.map((item: any) => item.time_period));
       const timePeriods = sortTimePeriodsAscending(Array.from(timePeriodsSet));
 
-      // Create line chart data format
       const result: any[] = [];
       
-      // England line
       const englandLine = {
         id: 'England',
         color: '#4ECDC4',
@@ -62,16 +56,16 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
           const item = englandData.find((d: any) => d.time_period === period);
           return {
             x: period,
-            y: item ? item.value : null
+            y: item ? Math.round(item.value * 1) / 1 : null // 
+            
           };
         }).filter(point => point.y !== null)
       };
       
       result.push(englandLine);
       
-      // ICB line if selected
       if (selectedICB && icbData.length > 0 && getAreaName) {
-        const icbName = 'Selected ICB';
+        const icbName = getAreaName(selectedICB) || 'ICB';
         const icbLine = {
           id: icbName,
           color: '#E91E63',
@@ -79,7 +73,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
             const item = icbData.find((d: any) => d.time_period === period);
             return {
               x: period,
-              y: item ? item.value : null
+              y: item ? Math.round(item.value * 1) / 1 : null // Round to 1 decimal
             };
           }).filter(point => point.y !== null)
         };
@@ -94,7 +88,6 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
     }
   }, [filterState]);
 
-  // Loading states
   if (!filterState) {
     return (
       <Box sx={{ 
@@ -173,7 +166,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
       <Box sx={{ flex: 1, minHeight: 0 }}>
         <ResponsiveLine
           data={chartData}
-          margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 20, right: 20, bottom: 50, left: 60 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -208,32 +201,6 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
           pointLabelYOffset={-12}
           enableArea={false}
           useMesh={true}
-          legends={[
-            {
-              anchor: 'bottom-right',
-              direction: 'column',
-              justify: false,
-              translateX: 120,
-              translateY: 0,
-              itemsSpacing: 2,
-              itemDirection: 'left-to-right',
-              itemWidth: 100,
-              itemHeight: 20,
-              itemOpacity: 0.85,
-              symbolSize: 12,
-              symbolShape: 'circle',
-              symbolBorderColor: 'rgba(0, 0, 0, .5)',
-              effects: [
-                {
-                  on: 'hover',
-                  style: {
-                    itemBackground: 'rgba(0, 0, 0, .03)',
-                    itemOpacity: 1
-                  }
-                }
-              ]
-            }
-          ]}
           animate={true}
           motionConfig="gentle"
           lineWidth={3}
