@@ -54,13 +54,13 @@ const getRegionColor = (icbCode: string) => {
       typeof valueRange.max !== 'number' ||
       isNaN(valueRange.min) || 
       isNaN(valueRange.max)) {
-    return '#4ECDC4';
+    return '#7c75b9';
   }
   
   const { min, max } = valueRange;
   
   if (max <= min) {
-    return '#4ECDC4';
+    return '#7c75b9';
   }
   
   // Calculate normalized value (0 to 1) based on THIS metric's range
@@ -69,7 +69,7 @@ const getRegionColor = (icbCode: string) => {
   
   // FIXED GRADIENT: Always use the same color scale
   // Light blue → Dark blue (consistent across ALL metrics)
-  const hue = 195; // Cyan-blue (fixed)
+  const hue = 246; // Edge-blue (fixed)
   const saturation = 65; // Fixed saturation
   const lightness = 75 - (clampedValue * 35); // 75% (light) to 40% (dark)
   

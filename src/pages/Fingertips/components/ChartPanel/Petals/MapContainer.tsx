@@ -45,7 +45,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
     <Box
       sx={{
         backgroundColor: 'white',
-        borderRadius: '0px 100px 0px 100px',
+        borderRadius: '0px 80px 0px 80px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         border: '2px solid #161658ff',
         height: '100%',
@@ -90,7 +90,29 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
           }}
           titleAccess="Click on any Integrated Care Board to view detailed metrics. Colors represent performance relative to England average."
         />
+       
       </Box>
+       {/* Metric Name - NEW LOCATION */}
+      {selectedMetricDetails && (
+        <Box
+          sx={{
+            margin: '0 10px 10px 10px',
+            padding: '8px 12px',
+            flexShrink: 0,
+          }}
+        >
+          <Typography
+          variant="h1"
+          sx={{
+            color: '#2C3E50',
+            fontWeight: 600,
+            fontSize: '18px',
+          }}
+        >
+          {selectedMetric}
+        </Typography>
+        </Box>
+      )}
 
       {/* Main Content - Side by Side */}
       <Box
@@ -116,7 +138,6 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
           {/* Metric Card */}
           <Box sx={{ flexShrink: 0 }}>
             <MetricCard
-              selectedMetric={selectedMetricDetails}
               displayValue={displayValue}
               displayLabel={displayLabel}
             />

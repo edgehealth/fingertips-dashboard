@@ -49,7 +49,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
       <Box
         sx={{
           backgroundColor: 'white',
-          borderRadius: '100px 0px 100px 0px',
+          borderRadius: '80px 0px 80px 0px',
           padding: { xs: '0.75rem', md: '1rem' },
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
@@ -57,7 +57,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           minHeight: { xs: '250px', md: '280px' },
           maxHeight: { xs: '320px', md: '350px' },
           transition: 'all 0.3s ease',
-          overflow: 'auto',
+          overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           '&:hover': {
@@ -110,7 +110,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
 
         {/* Year Slider */}
         {availableYears.length > 0 && selectedYear && setSelectedYear && (
-          <Box sx={{ width: '100%', flexShrink: 0, mt: 2, px: 2 }}>
+          <Box sx={{ width: '100%', flexShrink: 0, mt: 2 }}>
             <YearSlider
               availableYears={availableYears}
               selectedYear={selectedYear}
@@ -124,7 +124,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
       <Box
         sx={{
           backgroundColor: 'white',
-          borderRadius: '0px 100px 0px 100px',
+          borderRadius: '0px 80px 0px 80px',
           padding: { xs: '0.75rem', md: '1rem' },
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
@@ -164,6 +164,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
               color: '#6c63ff',
               cursor: 'help',
               fontSize: { xs: '16px', md: '18px' },
+              marginLeft: '8px',
               '&:hover': {
                 color: '#5850d6',
               },

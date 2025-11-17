@@ -8,39 +8,14 @@ interface MetricOption {
 }
 
 interface MetricCardProps {
-  selectedMetric: MetricOption | null;
   displayValue?: number;
   displayLabel?: string;
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
-  selectedMetric,
   displayValue,
   displayLabel,
 }) => {
-  
-  if (!selectedMetric) {
-    return (
-      <Card
-        sx={{
-          minWidth: 250,
-          maxWidth: 300,
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(78, 205, 196, 0.2)',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        }}
-      >
-        <CardContent sx={{ padding: '16px' }}>
-          <Typography variant="body2" sx={{ color: '#666', fontStyle: 'italic' }}>
-            No metric selected
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card
       sx={{
@@ -74,16 +49,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
               marginRight: '8px',
             }} 
           />
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              fontWeight: 600,
-              color: '#2C3E50',
-              fontSize: '14px'
-            }}
-          >
-            {selectedMetric.name}
-          </Typography>
         </Box>
 
         {/* The Value */}

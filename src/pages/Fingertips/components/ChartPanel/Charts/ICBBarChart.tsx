@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
+import { sortTimePeriodsAscending } from '../../../utils/dateUtils';
 
 interface FilterState {
   selectedMetricDetails?: { id: string; name: string } | null;
@@ -46,9 +47,9 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
       const icbData = selectedICB ? 
         filtered.filter((item: any) => item.area_code === selectedICB) : [];
 
-      // Get unique time periods and sort them
+      // Get unique time periods and sort them using shared utility
       const timePeriodsSet = new Set(englandData.map((item: any) => item.time_period));
-      const timePeriods = Array.from(timePeriodsSet).sort();
+      const timePeriods = sortTimePeriodsAscending(Array.from(timePeriodsSet));
 
       // Create line chart data format
       const result: any[] = [];
@@ -70,7 +71,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
       
       // ICB line if selected
       if (selectedICB && icbData.length > 0 && getAreaName) {
-        const icbName = getAreaName(selectedICB) || 'ICB';
+        const icbName = 'Selected ICB';
         const icbLine = {
           id: icbName,
           color: '#E91E63',
