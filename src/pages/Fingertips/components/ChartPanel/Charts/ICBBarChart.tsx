@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { ResponsiveBar } from '@nivo/bar';
+import { ResponsiveLine } from '@nivo/line';
 
 interface FilterState {
   selectedMetricDetails?: { id: string; name: string } | null;
@@ -11,11 +11,11 @@ interface FilterState {
   loading?: boolean;
 }
 
-interface ICBBarChartProps {
+interface ICBLineChartProps {
   filterState?: FilterState;
 }
 
-const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
+const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
   const chartData = React.useMemo(() => {
     if (!filterState || !filterState.selectedMetric || !filterState.data) {
       return [];
@@ -46,30 +46,45 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       const icbData = selectedICB ? 
         filtered.filter((item: any) => item.area_code === selectedICB) : [];
 
-      // Get unique time periods
+      // Get unique time periods and sort them
       const timePeriodsSet = new Set(englandData.map((item: any) => item.time_period));
       const timePeriods = Array.from(timePeriodsSet).sort();
 
-      // Create chart data
+      // Create line chart data format
       const result: any[] = [];
       
-      timePeriods.forEach(period => {
-        const englandItem = englandData.find((item: any) => item.time_period === period);
-        const icbItem = icbData.find((item: any) => item.time_period === period);
-        
-        if (englandItem) {
-          const dataPoint: any = {
-            year: period,
-            England: englandItem.value,
+      // England line
+      const englandLine = {
+        id: 'England',
+        color: '#4ECDC4',
+        data: timePeriods.map(period => {
+          const item = englandData.find((d: any) => d.time_period === period);
+          return {
+            x: period,
+            y: item ? item.value : null
           };
-          
-          if (icbItem && selectedICB && getAreaName) {
-            dataPoint['ICB'] = icbItem.value;
-          }
-          
-          result.push(dataPoint);
-        }
-      });
+        }).filter(point => point.y !== null)
+      };
+      
+      result.push(englandLine);
+      
+      // ICB line if selected
+      if (selectedICB && icbData.length > 0 && getAreaName) {
+        const icbName = getAreaName(selectedICB) || 'ICB';
+        const icbLine = {
+          id: icbName,
+          color: '#E91E63',
+          data: timePeriods.map(period => {
+            const item = icbData.find((d: any) => d.time_period === period);
+            return {
+              x: period,
+              y: item ? item.value : null
+            };
+          }).filter(point => point.y !== null)
+        };
+        
+        result.push(icbLine);
+      }
       
       return result;
     } catch (error) {
@@ -77,16 +92,6 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       return [];
     }
   }, [filterState]);
-
-  const keys = React.useMemo(() => {
-    const baseKeys = ['England'];
-    
-    if (filterState?.selectedICB && chartData.length > 0) {
-      baseKeys.push('ICB');
-    }
-    
-    return baseKeys;
-  }, [chartData, filterState?.selectedICB]);
 
   // Loading states
   if (!filterState) {
@@ -164,18 +169,19 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
       display: 'flex',
       flexDirection: 'column'
     }}>
-      <Box sx={{ flex: 1, minHeight: 300 }}>
-        <ResponsiveBar
+      <Box sx={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveLine
           data={chartData}
-          keys={keys}
-          indexBy="year"
-          groupMode="grouped"
           margin={{ top: 20, right: 130, bottom: 50, left: 60 }}
-          padding={0.3}
-          valueScale={{ type: 'linear' }}
-          indexScale={{ type: 'band', round: true }}
-          colors={['#4ECDC4', '#E91E63']}
-          borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+          xScale={{ type: 'point' }}
+          yScale={{
+            type: 'linear',
+            min: 'auto',
+            max: 'auto',
+            stacked: false,
+            reverse: false
+          }}
+          curve="monotoneX"
           axisTop={null}
           axisRight={null}
           axisBottom={{
@@ -183,38 +189,44 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
             tickPadding: 5,
             tickRotation: -45,
             legend: '',
-            legendPosition: 'middle',
-            legendOffset: 40
+            legendOffset: 40,
+            legendPosition: 'middle'
           }}
           axisLeft={{
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
             legend: '',
-            legendPosition: 'middle',
-            legendOffset: -40
+            legendOffset: -45,
+            legendPosition: 'middle'
           }}
-          labelSkipWidth={12}
-          labelSkipHeight={12}
-          labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+          pointSize={8}
+          pointColor={{ theme: 'background' }}
+          pointBorderWidth={2}
+          pointBorderColor={{ from: 'serieColor' }}
+          pointLabelYOffset={-12}
+          enableArea={false}
+          useMesh={true}
           legends={[
             {
-              dataFrom: 'keys',
               anchor: 'bottom-right',
               direction: 'column',
               justify: false,
               translateX: 120,
               translateY: 0,
               itemsSpacing: 2,
+              itemDirection: 'left-to-right',
               itemWidth: 100,
               itemHeight: 20,
-              itemDirection: 'left-to-right',
               itemOpacity: 0.85,
-              symbolSize: 20,
+              symbolSize: 12,
+              symbolShape: 'circle',
+              symbolBorderColor: 'rgba(0, 0, 0, .5)',
               effects: [
                 {
                   on: 'hover',
                   style: {
+                    itemBackground: 'rgba(0, 0, 0, .03)',
                     itemOpacity: 1
                   }
                 }
@@ -222,10 +234,13 @@ const ICBBarChart: React.FC<ICBBarChartProps> = ({ filterState }) => {
             }
           ]}
           animate={true}
+          motionConfig="gentle"
+          lineWidth={3}
+          colors={{ datum: 'color' }}
         />
       </Box>
     </Box>
   );
 };
 
-export default ICBBarChart;
+export default ICBLineChart;

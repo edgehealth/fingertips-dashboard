@@ -7,6 +7,7 @@ export interface NHSDataPoint {
   value: number;
   indicator_name: string;
   time_period: string;
+  time_period_sortable?: number;
 }
 
 export interface NHSContextType {

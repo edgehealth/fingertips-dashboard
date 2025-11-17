@@ -3,9 +3,9 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import MetricFilter from '../../FilterPanel/Filters';
-import ICBBarChart from '../Charts/ICBBarChart';
+import ICBLineChart from '../Charts/ICBBarChart';
+import YearSlider from '../SharedComponents/YearSlider';
 
-// Define the type for the filter state
 interface FilterState {
   availableMetrics: { id: string; name: string }[];
   selectedMetric: string | null;
@@ -15,6 +15,9 @@ interface FilterState {
   barChartData?: any[];
   getAreaName?: (areaCode: string) => string | undefined;
   loading: boolean;
+  availableYears?: string[];
+  selectedYear?: string | null;
+  setSelectedYear?: (year: string) => void;
 }
 
 interface SidebarContainerProps {
@@ -27,10 +30,10 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
     selectedMetric,
     setSelectedMetric,
     loading,
+    availableYears = [],
+    selectedYear,
+    setSelectedYear,
   } = filterState;
-
-  console.log('SidebarContainer - availableMetrics:', availableMetrics);
-  console.log('SidebarContainer - selectedMetric:', selectedMetric);
 
   return (
     <Box
@@ -51,10 +54,12 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
           flex: '0 0 auto',
-          minHeight: { xs: '150px', md: '170px' },
-          maxHeight: { xs: '180px', md: '200px' },
+          minHeight: { xs: '250px', md: '280px' },
+          maxHeight: { xs: '320px', md: '350px' },
           transition: 'all 0.3s ease',
-          overflow: 'hidden',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
           '&:hover': {
             transform: 'translateY(-2px)',
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
@@ -68,6 +73,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             alignItems: 'center',
             marginBottom: { xs: '0.75rem', md: '1rem' },
             justifyContent: 'right',
+            flexShrink: 0,
           }}
         >
           <Typography
@@ -89,22 +95,29 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
                 color: '#5850d6',
               },
             }}
-            titleAccess="Select metrics to visualize health data across Integrated Care Boards"
+            titleAccess="Select metrics and time periods to visualize health data across Integrated Care Boards"
           />
         </Box>
 
         {/* Metric Filter */}
-        <Box
-          sx={{
-            width: '100%',
-          }}
-        >
+        <Box sx={{ width: '100%', flexShrink: 0 }}>
           <MetricFilter
             availableMetrics={availableMetrics}
             selectedMetric={selectedMetric}
             onMetricChange={setSelectedMetric}
           />
         </Box>
+
+        {/* Year Slider */}
+        {availableYears.length > 0 && selectedYear && setSelectedYear && (
+          <Box sx={{ width: '100%', flexShrink: 0, mt: 2, px: 2 }}>
+            <YearSlider
+              availableYears={availableYears}
+              selectedYear={selectedYear}
+              onYearChange={setSelectedYear}
+            />
+          </Box>
+        )}
       </Box>
 
       {/* Bottom Section - Chart */}
@@ -170,7 +183,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             overflow: 'hidden',
           }}
         >
-            <ICBBarChart filterState={filterState} />
+          <ICBLineChart filterState={filterState} />
         </Box>
       </Box>
     </Box>

@@ -34,45 +34,47 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
     handleICBClick,
   } = filterState;
 
-  const getRegionColor = (icbCode: string) => {
-    if (selectedICB === icbCode) {
-      return '#E91E63'; // Pink for selected
-    }
-    
-    if (!getValueForArea || !icbCode) {
-      return '#E0E0E0'; // Light gray for no data
-    }
-    
-    const dataValue = getValueForArea(icbCode);
-    
-    if (dataValue === undefined || dataValue === null || isNaN(dataValue)) {
-      return '#E0E0E0';
-    }
-    
-    if (!valueRange || 
-        typeof valueRange.min !== 'number' || 
-        typeof valueRange.max !== 'number' ||
-        isNaN(valueRange.min) || 
-        isNaN(valueRange.max)) {
-      return '#4ECDC4';
-    }
-    
-    const { min, max } = valueRange;
-    
-    if (max <= min) {
-      return '#4ECDC4';
-    }
-    
-    const normalizedValue = (dataValue - min) / (max - min);
-    const clampedValue = Math.max(0, Math.min(1, normalizedValue));
-    
-    // Create smooth color gradient using HSL
-    const hue = 240 - (clampedValue * 240); 
-    const saturation = 70;
-    const lightness = 60 - (clampedValue * 20);
-    
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  };
+const getRegionColor = (icbCode: string) => {
+  if (selectedICB === icbCode) {
+    return '#E91E63'; // Pink for selected
+  }
+  
+  if (!getValueForArea || !icbCode) {
+    return '#E0E0E0'; // Light gray for no data
+  }
+  
+  const dataValue = getValueForArea(icbCode);
+  
+  if (dataValue === undefined || dataValue === null || isNaN(dataValue)) {
+    return '#E0E0E0';
+  }
+  
+  if (!valueRange || 
+      typeof valueRange.min !== 'number' || 
+      typeof valueRange.max !== 'number' ||
+      isNaN(valueRange.min) || 
+      isNaN(valueRange.max)) {
+    return '#4ECDC4';
+  }
+  
+  const { min, max } = valueRange;
+  
+  if (max <= min) {
+    return '#4ECDC4';
+  }
+  
+  // Calculate normalized value (0 to 1) based on THIS metric's range
+  const normalizedValue = (dataValue - min) / (max - min);
+  const clampedValue = Math.max(0, Math.min(1, normalizedValue));
+  
+  // FIXED GRADIENT: Always use the same color scale
+  // Light blue → Dark blue (consistent across ALL metrics)
+  const hue = 195; // Cyan-blue (fixed)
+  const saturation = 65; // Fixed saturation
+  const lightness = 75 - (clampedValue * 35); // 75% (light) to 40% (dark)
+  
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+};
 
   if (loading) {
     return (
@@ -146,12 +148,12 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
         )}
 
         <svg
-          width="100%"
-          height="90%"
-          viewBox="0 50 500 500"
-          preserveAspectRatio="xMidYMid meet"
-          style={{ background: 'transparent', display: 'block' }}
-        >
+  width="100%"
+  height="100%"  // Changed from 90%
+  viewBox="0 0 500 600"  // Start at 0,0 and increase height
+  preserveAspectRatio="xMidYMid meet"
+  style={{ background: 'transparent', display: 'block' }}
+>
           {geoData.map((feature, index) => {
             const pathData = coordinatesToPath(feature.geometry.coordinates);
             const icbCode = feature.properties.icb23cd;
