@@ -18,11 +18,10 @@ const Fingertips: React.FC = () => {
       <HeaderContainer />
       <Box
         sx={{
-          flex: 1, // Take remaining space after header
           padding: { xs: '0.5rem', md: '1.5rem' },
           overflow: 'auto', // Allow scrolling only in this section if needed
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column'
         }}
       >
         <ChartPanel />

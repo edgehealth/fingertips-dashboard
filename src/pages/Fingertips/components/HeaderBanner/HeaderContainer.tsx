@@ -2,10 +2,10 @@ import React from 'react';
 import { Box } from '@mui/material';
 import Logo from './components/Logo';
 import TitleText from './components/TitleText';
+import DashboardInfoTooltip from './components/DashboardInfoTooltip';
 import Filters from '../FilterPanel/Filters';
 import { colors } from '../../../../theme';
 
-console.log('Filters component:', Filters); // Add this line
 
 const HeaderContainer: React.FC = () => {
   return (
@@ -27,12 +27,9 @@ const HeaderContainer: React.FC = () => {
           gap: '1rem',
         }}
       >
-        {/* Logo section */}
         <Logo />
-        
-        {/* Title section - takes up remaining space */}
         <TitleText />
-
+        <DashboardInfoTooltip />
       </Box>
     </Box>
   );

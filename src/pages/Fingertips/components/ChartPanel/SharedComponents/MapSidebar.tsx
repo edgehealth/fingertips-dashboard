@@ -2,7 +2,7 @@
 import React from 'react';
 import { Box, Typography, Tooltip } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import DHSCLogo from './DHSCLogo';
 
 interface MapSidebarProps {
   selectedMetric: string | null;
@@ -240,13 +240,21 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         }}
       >
         <Box sx={{ display: 'flex', gap: 1.5 }}>
-          <InfoOutlinedIcon sx={{ fontSize: '16px', color: '#6c63ff', flexShrink: 0, mt: 0.2 }} />
+          <DHSCLogo/>
           <Box>
             <Typography variant="caption" sx={{ fontSize: '11px', color: '#2C3E50', lineHeight: 1.5, display: 'block', mb: 0.5, fontWeight: 600 }}>
-              How to use this map
+              Fingertips Data
             </Typography>
             <Typography variant="caption" sx={{ fontSize: '10px', color: '#666', lineHeight: 1.5, display: 'block' }}>
-              Click on any region to view its specific value. Colors represent performance across all ICBs for the selected metric.
+              For more information on Fingertips data including metric definitions, visit the{' '}
+              <a
+                href="https://fingertips.phe.org.uk/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Fingertips website
+              </a>
+              .
             </Typography>
           </Box>
         </Box>
