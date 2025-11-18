@@ -1,10 +1,9 @@
-// MapContainer.tsx - Task 3: Using extracted legend component
+// MapContainer.tsx - Tasks 6/7/8: Using unified sidebar
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import FreshICBMap from '../Charts/ICBMap';
-import MetricCard from '../SharedComponents/MetricCard';
-import MapColorLegend from '../Charts/MapColorLegend';
+import MapSidebar from '../SharedComponents/MapSidebar';
 
 interface FilterState {
   selectedMetricDetails: { id: string; name: string } | null;
@@ -37,10 +36,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
   } = filterState;
   
   const currentValue = selectedICB ? getValueForArea(selectedICB) : undefined;
-  const selectedRegionName = selectedICB ? getAreaName(selectedICB) : undefined;
-  
-  const displayValue = currentValue !== undefined ? currentValue : averageValue;
-  const displayLabel = selectedICB ? selectedRegionName : "Average across all areas";
+  const selectedRegionName = selectedICB ? getAreaName(selectedICB) : null;
 
   return (
     <Box
@@ -66,8 +62,9 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          padding: '10px 20px',
+          padding: '16px 20px',
           flexShrink: 0,
+          borderBottom: '1px solid #f0f0f0',
         }}
       >
         <Typography
@@ -94,62 +91,31 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         />
       </Box>
 
-      {/* Metric Name */}
-      {selectedMetricDetails && (
-        <Box
-          sx={{
-            margin: '0 10px 10px 10px',
-            padding: '8px 12px',
-            flexShrink: 0,
-          }}
-        >
-          <Typography
-            variant="h1"
-            sx={{
-              color: '#2C3E50',
-              fontWeight: 600,
-              fontSize: '18px',
-            }}
-          >
-            {selectedMetric}
-          </Typography>
-        </Box>
-      )}
-
       {/* Main Content - Side by Side */}
       <Box
         sx={{
           flex: 1,
           display: 'flex',
           gap: '20px',
-          padding: '0 20px 20px 20px',
+          padding: '20px',
           minHeight: 0,
           overflow: 'hidden',
         }}
       >
-        {/* Left Column - Metric Card + Legend */}
+        {/* Left Sidebar - Unified component */}
         <Box
           sx={{
             flexShrink: 0,
-            width: '320px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
+            width: '300px',
           }}
         >
-          {/* Metric Card */}
-          <Box sx={{ flexShrink: 0 }}>
-            <MetricCard
-              displayValue={displayValue}
-              displayLabel={displayLabel}
-            />
-          </Box>
-
-          {/* Color Legend - Now extracted component with pink indicator */}
-          <MapColorLegend
-            valueRange={valueRange}
+          <MapSidebar
+            selectedMetric={selectedMetric}
             selectedICB={selectedICB}
-            selectedICBValue={currentValue}
+            selectedICBName={selectedRegionName}
+            currentValue={currentValue}
+            averageValue={averageValue}
+            valueRange={valueRange}
           />
         </Box>
 

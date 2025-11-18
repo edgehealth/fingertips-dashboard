@@ -44,7 +44,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         gap: '16px',
         padding: '20px',
         backgroundColor: '#fafbfc',
-        borderRadius: '16px',
+        borderRadius: '0px 16px 0px 16px',
         border: '1px solid #e1e8ed',
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
       }}
@@ -55,15 +55,11 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
           sx={{
             padding: '12px 16px',
             backgroundColor: 'white',
-            borderRadius: '12px',
+            borderRadius: '0px 12px 0px 12px',
             border: '1px solid #e1e8ed',
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            <TrendingUpIcon sx={{ fontSize: '16px', color: '#6c63ff' }} />
-            <Typography variant="caption" sx={{ color: '#666', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>
-              Selected Metric
-            </Typography>
           </Box>
           <Typography variant="body2" sx={{ color: '#2C3E50', fontWeight: 600, fontSize: '14px', lineHeight: 1.4 }}>
             {selectedMetric}
@@ -76,7 +72,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         sx={{
           padding: '20px',
           backgroundColor: 'white',
-          borderRadius: '12px',
+          borderRadius: '0px 12px 0px 12px',
           border: '1px solid #e1e8ed',
           textAlign: 'center',
         }}
@@ -143,7 +139,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
           sx={{
             padding: '16px',
             backgroundColor: 'white',
-            borderRadius: '12px',
+            borderRadius: '0px 12px 0px 12px',
             border: '1px solid #e1e8ed',
           }}
         >
@@ -239,7 +235,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         sx={{
           padding: '12px 16px',
           backgroundColor: '#f0f7ff',
-          borderRadius: '12px',
+          borderRadius: '0px 12px 0px 12px',
           border: '1px solid #d4e7ff',
         }}
       >
