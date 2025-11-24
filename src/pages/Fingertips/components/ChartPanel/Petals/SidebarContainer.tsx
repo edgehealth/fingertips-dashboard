@@ -10,10 +10,8 @@ interface FilterState {
   availableMetrics: { id: string; name: string }[];
   selectedMetric: string | null;
   selectedMetricDetails?: { id: string; name: string } | null;
-  selectedICB?: string | null;
   setSelectedMetric: (metric: string) => void;
   barChartData?: any[];
-  getAreaName?: (areaCode: string) => string | undefined;
   availableYears?: string[];
   selectedYear?: string | null;
   setSelectedYear?: (year: string) => void;
@@ -31,8 +29,6 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
     availableYears = [],
     selectedYear,
     setSelectedYear,
-    selectedICB,
-    getAreaName,
   } = filterState;
 
 
