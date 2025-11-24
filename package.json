@@ -2,6 +2,7 @@
   "name": "fingertips-dashboard",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://edgehealth.github.io/fingertips-dashboard",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -20,7 +21,6 @@
     "@types/react-dom": "^19.1.6",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
-    "react-dino-game": "^1.0.18",
     "react-dom": "^19.1.0",
     "react-scripts": "5.0.1",
     "recharts": "^3.1.0",
