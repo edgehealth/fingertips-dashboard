@@ -6,7 +6,6 @@ import FreshICBMap from '../Charts/ICBMap';
 import MapSidebar from '../SharedComponents/MapSidebar';
 
 interface FilterState {
-  selectedMetricDetails: { id: string; name: string } | null;
   selectedMetric: string | null;
   selectedICB: string | null;
   averageValue: number | undefined;
@@ -16,7 +15,6 @@ interface FilterState {
   handleICBClick: (icbCode: string, icbName: string) => void;
   handleICBHover: (icbName: string) => void;
   handleICBLeave: () => void;
-  loading: boolean;
 }
 
 interface MapContainerProps {
@@ -25,14 +23,12 @@ interface MapContainerProps {
 
 const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
   const { 
-    selectedMetricDetails, 
     selectedMetric, 
     selectedICB,
     averageValue, 
     getValueForArea, 
     getAreaName,
     valueRange, 
-    loading 
   } = filterState;
   
   const currentValue = selectedICB ? getValueForArea(selectedICB) : undefined;

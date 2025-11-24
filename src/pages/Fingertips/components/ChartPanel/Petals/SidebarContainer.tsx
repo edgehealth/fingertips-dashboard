@@ -14,7 +14,6 @@ interface FilterState {
   setSelectedMetric: (metric: string) => void;
   barChartData?: any[];
   getAreaName?: (areaCode: string) => string | undefined;
-  loading: boolean;
   availableYears?: string[];
   selectedYear?: string | null;
   setSelectedYear?: (year: string) => void;
@@ -29,7 +28,6 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
     availableMetrics,
     selectedMetric,
     setSelectedMetric,
-    loading,
     availableYears = [],
     selectedYear,
     setSelectedYear,
@@ -37,8 +35,6 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
     getAreaName,
   } = filterState;
 
-  // Get ICB name for legend
-  const icbName = selectedICB && getAreaName ? getAreaName(selectedICB) : null;
 
   return (
     <Box

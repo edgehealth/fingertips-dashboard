@@ -3,7 +3,6 @@ import { Box } from '@mui/material';
 import Logo from './components/Logo';
 import TitleText from './components/TitleText';
 import DashboardInfoTooltip from './components/DashboardInfoTooltip';
-import Filters from '../FilterPanel/Filters';
 import { colors } from '../../../../theme';
 
 

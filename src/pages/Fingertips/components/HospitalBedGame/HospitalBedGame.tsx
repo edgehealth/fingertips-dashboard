@@ -179,6 +179,7 @@ const HospitalBedGame: React.FC<HospitalBedGameProps> = ({
         cancelAnimationFrame(gameLoopRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameStarted, gameOver, obstacles, bedY]);
 
   // Styles
