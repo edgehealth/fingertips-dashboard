@@ -3,6 +3,7 @@ import { apiService } from '../services/fingertipsApi';
 import HospitalBedGame from '../pages/Fingertips/components/HospitalBedGame/HospitalBedGame';
 
 export interface NHSDataPoint {
+  value_note: string;
   area_code: string;
   area_name: string;
   value: number;
@@ -41,6 +42,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         value: item.value,
         indicator_name: item.indicator_name,
         time_period: item.time_period,
+        value_note: item.value_note || 'Other', 
       }));
       
       setData(transformedData);

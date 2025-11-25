@@ -7,7 +7,7 @@ import ICBLineChart from '../Charts/ICBLineChart';
 import YearSlider from '../SharedComponents/YearSlider';
 
 interface FilterState {
-  availableMetrics: { id: string; name: string }[];
+  availableMetrics: { id: string; name: string; category: string }[];
   selectedMetric: string | null;
   selectedMetricDetails?: { id: string; name: string } | null;
   setSelectedMetric: (metric: string) => void;

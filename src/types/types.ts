@@ -29,6 +29,7 @@ export interface ProcessedData {
 export interface MetricOption {
   id: string;
   name: string;
+  category: string;
 }
 
 export interface ValueRange {

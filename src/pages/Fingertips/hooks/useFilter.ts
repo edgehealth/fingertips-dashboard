@@ -4,6 +4,7 @@ import { useNHSData } from '../../../context/FingertipsContext';
 interface MetricOption {
   id: string;
   name: string;
+  category: string;
 }
 
 export const useFilter = () => {
@@ -12,18 +13,24 @@ export const useFilter = () => {
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
   const availableMetrics = useMemo((): MetricOption[] => {
-    const uniqueMetrics = data.reduce((acc, item) => {
-      if (!acc.find(m => m.name === item.indicator_name)) {
-        acc.push({
-          id: item.indicator_name,
-          name: item.indicator_name
-        });
-      }
-      return acc;
-    }, [] as MetricOption[]);
-    
-    return uniqueMetrics.sort((a, b) => a.name.localeCompare(b.name));
-  }, [data]);
+  const uniqueMetrics = data.reduce((acc, item) => {
+    if (!acc.find(m => m.name === item.indicator_name)) {
+      acc.push({
+        id: item.indicator_name,
+        name: item.indicator_name,
+        category: item.value_note || 'Other'
+      });
+    }
+    return acc;
+  }, [] as MetricOption[]);
+  
+  // Sort by category first, then by name
+  return uniqueMetrics.sort((a, b) => {
+    const catCompare = a.category.localeCompare(b.category);
+    if (catCompare !== 0) return catCompare;
+    return a.name.localeCompare(b.name);
+  });
+}, [data]);
 
   const availableYears = useMemo((): string[] => {
     if (!selectedMetric) return [];
