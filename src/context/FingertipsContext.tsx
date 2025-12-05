@@ -32,7 +32,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const loadData = async () => {
     setLoading(true);
     setError(false);
-    setGameVisible(true); // Show game when loading starts
+    setGameVisible(true);
     try {
       const response = await apiService.getIndicatorData();
       
@@ -42,15 +42,14 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         value: item.value,
         indicator_name: item.indicator_name,
         time_period: item.time_period,
+        time_period_sortable: item.time_period_sortable,
         value_note: item.value_note || 'Other', 
       }));
       
       setData(transformedData);
-      // Don't auto-hide game - let user close it
     } catch (error) {
       console.error('Error loading data from API:', error);
       setError(true);
-      // Keep game visible on error
     } finally {
       setLoading(false);
     }
@@ -68,10 +67,8 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       error,
       setSelectedRegion,
     }}>
-      {/* Always render the dashboard */}
       {children}
       
-      {/* Game stays visible once shown, until user closes it */}
       {gameVisible && (
         <HospitalBedGame 
           onRetry={error ? loadData : undefined}

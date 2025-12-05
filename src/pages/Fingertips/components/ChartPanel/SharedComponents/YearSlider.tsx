@@ -1,6 +1,6 @@
-// components/YearSlider.tsx
 import React from 'react';
-import { Box, Slider, Typography } from '@mui/material';
+import { Box, Slider, Typography, Tooltip } from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import type { YearSliderProps } from '../../../../../types/types';
 import { sortTimePeriodsAscending } from '../../../utils/dateUtils';
 
@@ -9,7 +9,6 @@ const YearSlider: React.FC<YearSliderProps> = ({
   selectedYear,
   onYearChange,
 }) => {
-  // Sort years using shared utility - MUST be before any conditional returns
   const sortedYears = React.useMemo(() => 
     sortTimePeriodsAscending(availableYears), 
     [availableYears]
@@ -19,7 +18,6 @@ const YearSlider: React.FC<YearSliderProps> = ({
     return null;
   }
 
-  // Create year index mapping with sorted years
   const yearToIndex = sortedYears.reduce((acc, year, index) => {
     acc[year] = index;
     return acc;
@@ -48,17 +46,42 @@ const YearSlider: React.FC<YearSliderProps> = ({
         backgroundColor: 'transparent',
       }}
     >
-      <Typography
-        variant="body2"
+      <Box
         sx={{
-          color: '#666',
-          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '4px',
           marginBottom: '4px',
-          fontSize: '11px',
         }}
       >
-        Time Period
-      </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            color: '#666',
+            textAlign: 'center',
+            fontSize: '11px',
+          }}
+        >
+          Time Period
+        </Typography>
+        <Tooltip 
+          title="Only years with ICB-level data available are shown"
+          arrow
+          placement="top"
+        >
+          <InfoOutlinedIcon
+            sx={{
+              fontSize: '14px',
+              color: '#999',
+              cursor: 'help',
+              '&:hover': {
+                color: '#666',
+              },
+            }}
+          />
+        </Tooltip>
+      </Box>
       
       <Typography
         variant="h6"
@@ -126,7 +149,6 @@ const YearSlider: React.FC<YearSliderProps> = ({
           px: 1,
         }}
       >
-        
         <Typography variant="caption" sx={{ color: '#999', fontSize: '9px' }}>
           {sortedYears[0]} (Earliest)
         </Typography>
