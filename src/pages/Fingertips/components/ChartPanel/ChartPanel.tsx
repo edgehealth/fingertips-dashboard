@@ -1,4 +1,4 @@
-// ChartPanel.tsx - Refactored with two main containers
+// ChartPanel.tsx
 import React from 'react';
 import { Box } from '@mui/material';
 import MapContainer from './Petals/MapContainer';
@@ -7,13 +7,9 @@ import { useFilter } from '../../hooks/useFilter';
 import { useMap } from '../../../Fingertips/hooks/useMap';
 
 const ChartPanel: React.FC = () => {
-  // Lift the filter state up to the parent
   const filterState = useFilter();
-  
-  // Get the selected ICB from the map
   const { selectedICB, handleICBClick, handleICBHover, handleICBLeave } = useMap();
   
-  // Combine both states
   const combinedState = {
     ...filterState,
     selectedICB,
@@ -26,13 +22,31 @@ const ChartPanel: React.FC = () => {
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: '2fr 1fr',
-        gap: '1.5rem',
-        height: '50rem',
+        gridTemplateColumns: {
+          xs: '1fr',           // Mobile & tablet: single column
+          lg: '1fr 1fr',       // Small desktop: equal columns
+          xl: '2fr 1fr',       // Large desktop: map takes 2/3
+        },
+        gap: {
+          xs: '1rem',
+          lg: '1.5rem',
+        },
+        height: {
+          xs: 'auto',
+          lg: '50rem',
+        },
+        minHeight: {
+          xs: '100vh',
+          lg: 'auto',
+        },
         width: '100%',
         maxWidth: '1600px',
         margin: '0 auto',
-        padding: '1rem',
+        padding: {
+          xs: '0.5rem',
+          sm: '0.75rem',
+          lg: '1rem',
+        },
       }}
     >
       {/* Left side - Large map container */}
