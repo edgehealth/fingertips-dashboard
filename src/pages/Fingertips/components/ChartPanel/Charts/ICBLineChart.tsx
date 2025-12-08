@@ -1,5 +1,6 @@
+// ICBLineChart.tsx
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { sortTimePeriodsAscending } from '../../../utils/dateUtils';
 
@@ -17,6 +18,9 @@ interface ICBLineChartProps {
 }
 
 const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+
   const chartData = React.useMemo(() => {
     if (!filterState || !filterState.selectedMetric || !filterState.data) {
       return [];
@@ -56,8 +60,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
           const item = englandData.find((d: any) => d.time_period === period);
           return {
             x: period,
-            y: item ? Math.round(item.value * 1) / 1 : null // 
-            
+            y: item ? Math.round(item.value * 1) / 1 : null
           };
         }).filter(point => point.y !== null)
       };
@@ -73,7 +76,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
             const item = icbData.find((d: any) => d.time_period === period);
             return {
               x: period,
-              y: item ? Math.round(item.value * 1) / 1 : null // Round to 1 decimal
+              y: item ? Math.round(item.value * 1) / 1 : null
             };
           }).filter(point => point.y !== null)
         };
@@ -95,6 +98,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         alignItems: 'center', 
         justifyContent: 'center',
         height: '100%',
+        minHeight: '200px',
         color: 'text.secondary'
       }}>
         <Typography>Loading chart...</Typography>
@@ -111,6 +115,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         alignItems: 'center', 
         justifyContent: 'center',
         height: '100%',
+        minHeight: '200px',
         color: 'text.secondary'
       }}>
         <Typography>Loading chart...</Typography>
@@ -125,6 +130,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         alignItems: 'center', 
         justifyContent: 'center',
         height: '100%',
+        minHeight: '200px',
         color: 'text.secondary'
       }}>
         <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
@@ -142,6 +148,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         alignItems: 'center', 
         justifyContent: 'center',
         height: '100%',
+        minHeight: '200px',
         color: 'text.secondary',
         textAlign: 'center'
       }}>
@@ -159,14 +166,18 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
     <Box sx={{ 
       width: '100%', 
       height: '100%',
+      minHeight: { xs: '250px', lg: '300px' },
       backgroundColor: 'transparent',
       display: 'flex',
       flexDirection: 'column'
     }}>
-      <Box sx={{ flex: 1, minHeight: 0 }}>
+      <Box sx={{ flex: 1, minHeight: 0, height: '100%' }}>
         <ResponsiveLine
           data={chartData}
-          margin={{ top: 20, right: 20, bottom: 50, left: 60 }}
+          margin={isMobile 
+            ? { top: 10, right: 10, bottom: 40, left: 40 }
+            : { top: 20, right: 20, bottom: 50, left: 60 }
+          }
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -181,10 +192,11 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
           axisBottom={{
             tickSize: 5,
             tickPadding: 5,
-            tickRotation: -45,
+            tickRotation: isMobile ? -60 : -45,
             legend: '',
             legendOffset: 40,
-            legendPosition: 'middle'
+            legendPosition: 'middle',
+            tickValues: isMobile ? 'every 2' : undefined,
           }}
           axisLeft={{
             tickSize: 5,
@@ -192,18 +204,19 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
             tickRotation: 0,
             legend: '',
             legendOffset: -45,
-            legendPosition: 'middle'
+            legendPosition: 'middle',
+            format: isMobile ? (v) => Math.round(v as number) : undefined,
           }}
-          pointSize={8}
+          pointSize={isMobile ? 4 : 8}
           pointColor={{ theme: 'background' }}
-          pointBorderWidth={2}
+          pointBorderWidth={isMobile ? 1 : 2}
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}
           enableArea={false}
           useMesh={true}
           animate={true}
           motionConfig="gentle"
-          lineWidth={3}
+          lineWidth={isMobile ? 2 : 3}
           colors={{ datum: 'color' }}
         />
       </Box>

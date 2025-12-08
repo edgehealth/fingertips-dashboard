@@ -1,7 +1,9 @@
-// MapContainer.tsx - Tasks 6/7/8: Using unified sidebar
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+// MapContainer.tsx
+import React, { useState } from 'react';
+import { Box, Typography, Drawer, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import FreshICBMap from '../Charts/ICBMap';
 import MapSidebar from '../SharedComponents/MapSidebar';
 
@@ -22,6 +24,10 @@ interface MapContainerProps {
 }
 
 const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+
   const { 
     selectedMetric, 
     selectedICB,
@@ -34,6 +40,17 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
   const currentValue = selectedICB ? getValueForArea(selectedICB) : undefined;
   const selectedRegionName = selectedICB ? getAreaName(selectedICB) : null;
 
+  const sidebarContent = (
+    <MapSidebar
+      selectedMetric={selectedMetric}
+      selectedICB={selectedICB}
+      selectedICBName={selectedRegionName}
+      currentValue={currentValue}
+      averageValue={averageValue}
+      valueRange={valueRange}
+    />
+  );
+
   return (
     <Box
       sx={{
@@ -41,7 +58,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         borderRadius: '0px 80px 0px 80px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         border: '2px solid #161658ff',
-        height: '100%',
+        height: { xs: '500px', lg: '100%' },
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -58,62 +75,78 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          padding: '16px 20px',
+          justifyContent: 'space-between',
+          padding: { xs: '12px 16px', lg: '16px 20px' },
           flexShrink: 0,
           borderBottom: '1px solid #f0f0f0',
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            color: '#2C3E50',
-            fontWeight: 600,
-            fontSize: '18px',
-          }}
-        >
-          ICB Map
-        </Typography>
-        <InfoOutlinedIcon
-          sx={{
-            color: '#6c63ff',
-            cursor: 'help',
-            fontSize: '20px',
-            marginLeft: '8px',
-            '&:hover': {
-              color: '#5850d6',
-            },
-          }}
-          titleAccess="Click on any Integrated Care Board to view detailed metrics. Colors represent performance relative to England average."
-        />
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: '#2C3E50',
+              fontWeight: 600,
+              fontSize: { xs: '16px', lg: '18px' },
+            }}
+          >
+            ICB Map
+          </Typography>
+          <InfoOutlinedIcon
+            sx={{
+              color: '#6c63ff',
+              cursor: 'help',
+              fontSize: { xs: '18px', lg: '20px' },
+              marginLeft: '8px',
+              '&:hover': {
+                color: '#5850d6',
+              },
+            }}
+            titleAccess="Click on any Integrated Care Board to view detailed metrics. Colors represent performance relative to England average."
+          />
+        </Box>
+
+        
       </Box>
 
-      {/* Main Content - Side by Side */}
+      {/* Main Content */}
       <Box
         sx={{
           flex: 1,
           display: 'flex',
           gap: '20px',
-          padding: '20px',
+          padding: { xs: '12px', lg: '20px' },
           minHeight: 0,
           overflow: 'hidden',
         }}
       >
-        {/* Left Sidebar - Unified component */}
-        <Box
-          sx={{
-            flexShrink: 0,
-            width: '300px',
-          }}
-        >
-          <MapSidebar
-            selectedMetric={selectedMetric}
-            selectedICB={selectedICB}
-            selectedICBName={selectedRegionName}
-            currentValue={currentValue}
-            averageValue={averageValue}
-            valueRange={valueRange}
-          />
-        </Box>
+        {/* Mobile menu button */}
+        {isMobile && (
+          <IconButton
+            onClick={() => setDrawerOpen(true)}
+            sx={{
+              backgroundColor: '#6c63ff',
+              color: 'white',
+              height: '40px',
+              '&:hover': {
+                backgroundColor: '#5850d6',
+              },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
+        {/* Left Sidebar - Hidden on mobile */}
+        {!isMobile && (
+          <Box
+            sx={{
+              flexShrink: 0,
+              width: '300px',
+            }}
+          >
+            {sidebarContent}
+          </Box>
+        )}
 
         {/* Map - Takes remaining space */}
         <Box
@@ -129,6 +162,30 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
           <FreshICBMap filterState={filterState} />
         </Box>
       </Box>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: '300px',
+            padding: '16px',
+            backgroundColor: '#f8f9fa',
+          },
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
+            Map Details
+          </Typography>
+          <IconButton onClick={() => setDrawerOpen(false)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        {sidebarContent}
+      </Drawer>
     </Box>
   );
 };

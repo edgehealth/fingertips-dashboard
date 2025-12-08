@@ -1,4 +1,4 @@
-// Containers/SidebarContainer.tsx - Task 2: Move legend to header
+// SidebarContainer.tsx
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -31,14 +31,13 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
     setSelectedYear,
   } = filterState;
 
-
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        gap: { xs: '0.75rem', md: '1rem' },
-        height: '100%',
+        gap: { xs: '0.75rem', lg: '1rem' },
+        height: { xs: 'auto', lg: '100%' },
         overflow: 'visible',
       }}
     >
@@ -47,12 +46,12 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
         sx={{
           backgroundColor: 'white',
           borderRadius: '80px 0px 80px 0px',
-          padding: { xs: '0.75rem', md: '1rem' },
+          padding: { xs: '0.75rem', lg: '1rem' },
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
           flex: '0 0 auto',
-          minHeight: { xs: '250px', md: '280px' },
-          maxHeight: { xs: '320px', md: '350px' },
+          minHeight: { xs: '200px', lg: '280px' },
+          maxHeight: { xs: '280px', lg: '350px' },
           transition: 'all 0.3s ease',
           overflow: 'visible',
           display: 'flex',
@@ -67,7 +66,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            marginBottom: { xs: '0.75rem', md: '1rem' },
+            marginBottom: { xs: '0.5rem', lg: '1rem' },
             justifyContent: 'right',
             flexShrink: 0,
           }}
@@ -77,7 +76,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             sx={{
               color: '#2C3E50',
               fontWeight: 600,
-              fontSize: { xs: '14px', md: '16px' },
+              fontSize: { xs: '14px', lg: '16px' },
             }}
           >
             Controls
@@ -86,7 +85,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             sx={{
               color: '#6c63ff',
               cursor: 'help',
-              fontSize: { xs: '16px', md: '18px' },
+              fontSize: { xs: '16px', lg: '18px' },
               '&:hover': {
                 color: '#5850d6',
               },
@@ -104,7 +103,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
         </Box>
 
         {availableYears.length > 0 && selectedYear && setSelectedYear && (
-          <Box sx={{ width: '100%', flexShrink: 0, mt: 2 }}>
+          <Box sx={{ width: '100%', flexShrink: 0, mt: { xs: 1, lg: 2 } }}>
             <YearSlider
               availableYears={availableYears}
               selectedYear={selectedYear}
@@ -119,13 +118,13 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
         sx={{
           backgroundColor: 'white',
           borderRadius: '0px 80px 0px 80px',
-          padding: { xs: '0.75rem', md: '1rem' },
+          padding: { xs: '0.75rem', lg: '1rem' },
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
-          flex: 1,
+          flex: { xs: '0 0 auto', lg: 1 },
+          minHeight: { xs: '300px', lg: 0 },
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 0,
           overflow: 'visible',
           transition: 'all 0.3s ease',
           '&:hover': {
@@ -139,17 +138,19 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            marginBottom: { xs: '0.5rem', md: '0.75rem' },
+            flexWrap: 'wrap',
+            gap: { xs: 0.5, lg: 1 },
+            marginBottom: { xs: '0.5rem', lg: '0.75rem' },
             flexShrink: 0,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography
               variant="h6"
               sx={{
                 color: '#2C3E50',
                 fontWeight: 600,
-                fontSize: { xs: '14px', md: '16px' },
+                fontSize: { xs: '13px', lg: '16px' },
               }}
             >
               Comparison to England
@@ -158,7 +159,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
               sx={{
                 color: '#6c63ff',
                 cursor: 'help',
-                fontSize: { xs: '16px', md: '18px' },
+                fontSize: { xs: '14px', lg: '18px' },
                 '&:hover': {
                   color: '#5850d6',
                 },
@@ -167,34 +168,39 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             />
           </Box>
 
-          {/* Legend - Moved here */}
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', marginLeft: '20px' }}>
+          {/* Legend */}
+          <Box sx={{ 
+            display: 'flex', 
+            gap: { xs: 1, lg: 2 }, 
+            alignItems: 'center', 
+            marginLeft: { xs: 'auto', lg: '20px' },
+          }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Box
                 sx={{
-                  width: 16,
+                  width: { xs: 12, lg: 16 },
                   height: 3,
                   backgroundColor: '#4ECDC4',
                   borderRadius: 1,
                 }}
               />
-              <Typography variant="caption" sx={{ fontSize: '11px', color: '#666' }}>
+              <Typography variant="caption" sx={{ fontSize: { xs: '9px', lg: '11px' }, color: '#666' }}>
                 England
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Box
-                  sx={{
-                    width: 16,
-                    height: 3,
-                    backgroundColor: '#E91E63',
-                    borderRadius: 1,
-                  }}
-                />
-                <Typography variant="caption" sx={{ fontSize: '11px', color: '#666' }}>
-                  Selected ICB
-                </Typography>
-              </Box>
+              <Box
+                sx={{
+                  width: { xs: 12, lg: 16 },
+                  height: 3,
+                  backgroundColor: '#E91E63',
+                  borderRadius: 1,
+                }}
+              />
+              <Typography variant="caption" sx={{ fontSize: { xs: '9px', lg: '11px' }, color: '#666' }}>
+                Selected ICB
+              </Typography>
+            </Box>
           </Box>
         </Box>
 
@@ -205,7 +211,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: 0,
+            minHeight: { xs: '220px', lg: 0 },
             overflow: 'visible',
           }}
         >
