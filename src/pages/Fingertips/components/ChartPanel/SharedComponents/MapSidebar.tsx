@@ -240,13 +240,12 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         }}
       >
         <Box sx={{ display: 'flex', gap: 1.5 }}>
-          <DHSCLogo/>
           <Box>
             <Typography variant="caption" sx={{ fontSize: '11px', color: '#2C3E50', lineHeight: 1.5, display: 'block', mb: 0.5, fontWeight: 600 }}>
               Fingertips Data
             </Typography>
             <Typography variant="caption" sx={{ fontSize: '10px', color: '#666', lineHeight: 1.5, display: 'block' }}>
-              For more information on Fingertips data including metric definitions, visit the{' '}
+              For more information on Fingertips data including metric definitions, please visit the{' '}
               <a
                 href="https://fingertips.phe.org.uk/"
                 target="_blank"
