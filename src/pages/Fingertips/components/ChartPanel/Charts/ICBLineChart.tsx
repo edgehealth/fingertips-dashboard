@@ -60,7 +60,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
           const item = englandData.find((d: any) => d.time_period === period);
           return {
             x: period,
-            y: item ? Math.round(item.value * 1) / 1 : null
+            y: item ? (item.value > 10 ? Math.round(item.value) : Math.round(item.value * 10) / 10) : null
           };
         }).filter(point => point.y !== null)
       };
@@ -76,7 +76,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
             const item = icbData.find((d: any) => d.time_period === period);
             return {
               x: period,
-              y: item ? Math.round(item.value * 1) / 1 : null
+              y: item ? (item.value > 10 ? Math.round(item.value) : Math.round(item.value * 10) / 10) : null
             };
           }).filter(point => point.y !== null)
         };
@@ -175,7 +175,7 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
         <ResponsiveLine
           data={chartData}
           margin={isMobile 
-            ? { top: 10, right: 10, bottom: 40, left: 40 }
+            ? { top: 10, right: 10, bottom: 50, left: 60 }
             : { top: 20, right: 20, bottom: 50, left: 60 }
           }
           xScale={{ type: 'point' }}
@@ -214,6 +214,21 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
           pointLabelYOffset={-12}
           enableArea={false}
           useMesh={true}
+          tooltip={({ point }) => (
+            <Box
+              sx={{
+                background: 'white',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                border: '1px solid #ccc',
+              }}
+            >
+              <Typography variant="body2" sx={{ color: point.seriesColor, fontWeight: 750 }}>
+                {point.data.xFormatted}: {point.data.yFormatted}
+              </Typography>
+            </Box>
+          )}
           animate={true}
           motionConfig="gentle"
           lineWidth={isMobile ? 2 : 3}

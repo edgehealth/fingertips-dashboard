@@ -173,7 +173,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             display: 'flex', 
             gap: { xs: 1, lg: 2 }, 
             alignItems: 'center', 
-            marginLeft: { xs: 'auto', lg: '20px' },
+            marginLeft: { xs: '15px', lg: '20px' },
           }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Box

@@ -33,8 +33,8 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
   };
 
   const selectedPosition = getSelectedICBPosition();
-  const displayValue = currentValue !== undefined ? currentValue : averageValue;
   const isICBSelected = selectedICB && currentValue !== undefined;
+  const isICBSelectedButNoData = selectedICB && currentValue === undefined;
 
   return (
     <Box
@@ -77,8 +77,8 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
           textAlign: 'center',
         }}
       >
-        {/* ICB Name if selected */}
-        {isICBSelected && selectedICBName && (
+        {/* ICB Name or No Data Message */}
+        {selectedICB && (
           <Box
             sx={{
               mb: 2,
@@ -89,26 +89,32 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
             <Typography variant="caption" sx={{ color: '#666', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600, display: 'block', mb: 0.5 }}>
               Selected ICB
             </Typography>
-            <Typography variant="body2" sx={{ color: '#E91E63', fontWeight: 600, fontSize: '13px' }}>
-              {selectedICBName}
-            </Typography>
+            {isICBSelectedButNoData ? (
+              <Typography variant="body2" sx={{ color: '#f57c00', fontWeight: 500, fontSize: '12px', lineHeight: 1.4 }}>
+                No data available for this selection. Please select another ICB or year.
+              </Typography>
+            ) : (
+              <Typography variant="body2" sx={{ color: '#E91E63', fontWeight: 600, fontSize: '13px' }}>
+                {selectedICBName}
+              </Typography>
+            )}
           </Box>
         )}
 
         {/* The Value */}
-        {displayValue !== undefined ? (
+        {isICBSelected ? (
           <>
             <Typography
               variant="h3"
               sx={{
-                color: isICBSelected ? '#E91E63' : '#4ECDC4',
+                color: '#E91E63',
                 fontWeight: 700,
                 fontSize: '48px',
                 lineHeight: 1,
                 mb: 1,
               }}
             >
-              {displayValue.toFixed(1)}
+              {currentValue.toFixed(1)}
             </Typography>
             <Typography
               variant="caption"
@@ -118,7 +124,32 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
                 display: 'block',
               }}
             >
-              {isICBSelected ? 'ICB Value' : 'England Average'}
+              ICB Value
+            </Typography>
+          </>
+        ) : averageValue !== undefined ? (
+          <>
+            <Typography
+              variant="h3"
+              sx={{
+                color: '#4ECDC4',
+                fontWeight: 700,
+                fontSize: '48px',
+                lineHeight: 1,
+                mb: 1,
+              }}
+            >
+              {averageValue.toFixed(1)}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#999',
+                fontSize: '11px',
+                display: 'block',
+              }}
+            >
+              England Average
             </Typography>
           </>
         ) : (
