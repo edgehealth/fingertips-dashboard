@@ -38,6 +38,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
         flexDirection: 'column',
         gap: { xs: '0.75rem', lg: '1rem' },
         height: { xs: 'auto', lg: '100%' },
+        minWidth: 0,
         overflow: 'visible',
       }}
     >
@@ -50,6 +51,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
           flex: '0 0 auto',
+          minWidth: 0,
           minHeight: { xs: '200px', lg: '280px' },
           maxHeight: { xs: '280px', lg: '350px' },
           transition: 'all 0.3s ease',
@@ -122,6 +124,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           border: '2px solid #2d2d44',
           flex: { xs: '0 0 auto', lg: 1 },
+          minWidth: 0,
           minHeight: { xs: '300px', lg: 0 },
           display: 'flex',
           flexDirection: 'column',
@@ -212,6 +215,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
             alignItems: 'center',
             justifyContent: 'center',
             minHeight: { xs: '220px', lg: 0 },
+            minWidth: 0,
             overflow: 'visible',
           }}
         >

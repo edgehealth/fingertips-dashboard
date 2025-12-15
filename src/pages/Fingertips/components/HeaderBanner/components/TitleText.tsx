@@ -9,7 +9,7 @@ interface TitleTextProps {
 
 const TitleText: React.FC<TitleTextProps> = ({ 
   mainTitle = "Edge Health",
-  subtitle = "Children & Maternal Health"
+  subtitle = "Children & Young People Health"
 }) => {
   return (
     <Box

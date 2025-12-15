@@ -59,6 +59,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         border: '2px solid #161658ff',
         height: { xs: '500px', lg: '100%' },
+        minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -105,8 +106,6 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
             titleAccess="Click on any Integrated Care Board to view detailed metrics. Colors represent performance relative to England average."
           />
         </Box>
-
-        
       </Box>
 
       {/* Main Content */}
@@ -114,9 +113,10 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         sx={{
           flex: 1,
           display: 'flex',
-          gap: '20px',
-          padding: { xs: '12px', lg: '20px' },
+          gap: { xs: '12px', lg: '16px' },
+          padding: { xs: '12px', lg: '16px' },
           minHeight: 0,
+          minWidth: 0,
           overflow: 'hidden',
         }}
       >
@@ -136,12 +136,15 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
             <MenuIcon />
           </IconButton>
         )}
+        
         {/* Left Sidebar - Hidden on mobile */}
         {!isMobile && (
           <Box
             sx={{
               flexShrink: 0,
-              width: '300px',
+              width: { lg: '260px', xl: '300px' },
+              minWidth: '240px',
+              maxWidth: '300px',
             }}
           >
             {sidebarContent}

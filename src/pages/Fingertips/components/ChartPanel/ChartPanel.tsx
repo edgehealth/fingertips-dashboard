@@ -23,23 +23,17 @@ const ChartPanel: React.FC = () => {
       sx={{
         display: 'grid',
         gridTemplateColumns: {
-          xs: '1fr',           // Mobile & tablet: single column
-          lg: '1fr 1fr',       // Small desktop: equal columns
-          xl: '2fr 1fr',       // Large desktop: map takes 2/3
+          xs: '1fr',
+          lg: '1fr 1fr',
+          xl: '2fr 1fr',
         },
         gap: {
-          xs: '1rem',
-          lg: '1.5rem',
+          xs: '0.75rem',
+          lg: '1rem',
         },
-        height: {
-          xs: 'auto',
-          lg: '50rem',
-        },
-        minHeight: {
-          xs: '100vh',
-          lg: 'auto',
-        },
-        width: '100%',
+        flex: 1, // Take available space from parent
+        minHeight: 0, // Allow grid to shrink
+        width: '100%', // Changed from 97%
         maxWidth: '1600px',
         margin: '0 auto',
         padding: {
@@ -47,12 +41,10 @@ const ChartPanel: React.FC = () => {
           sm: '0.75rem',
           lg: '1rem',
         },
+        boxSizing: 'border-box',
       }}
     >
-      {/* Left side - Large map container */}
       <MapContainer filterState={combinedState} />
-
-      {/* Right side - Sidebar with controls and chart */}
       <SidebarContainer filterState={combinedState} />
     </Box>
   );
