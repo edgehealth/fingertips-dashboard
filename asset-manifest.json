@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/fingertips-dashboard/static/css/main.f855e6bc.css",
-    "main.js": "/fingertips-dashboard/static/js/main.496b7742.js",
+    "main.js": "/fingertips-dashboard/static/js/main.668941a6.js",
     "static/js/453.e8a19218.chunk.js": "/fingertips-dashboard/static/js/453.e8a19218.chunk.js",
     "index.html": "/fingertips-dashboard/index.html",
     "main.f855e6bc.css.map": "/fingertips-dashboard/static/css/main.f855e6bc.css.map",
-    "main.496b7742.js.map": "/fingertips-dashboard/static/js/main.496b7742.js.map",
+    "main.668941a6.js.map": "/fingertips-dashboard/static/js/main.668941a6.js.map",
     "453.e8a19218.chunk.js.map": "/fingertips-dashboard/static/js/453.e8a19218.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.496b7742.js"
+    "static/js/main.668941a6.js"
   ]
 }
