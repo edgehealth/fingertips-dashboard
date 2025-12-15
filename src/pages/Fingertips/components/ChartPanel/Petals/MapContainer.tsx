@@ -59,6 +59,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         border: '2px solid #161658ff',
         height: { xs: '500px', lg: '100%' },
+        maxHeight: { lg: '800px' },
         minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
