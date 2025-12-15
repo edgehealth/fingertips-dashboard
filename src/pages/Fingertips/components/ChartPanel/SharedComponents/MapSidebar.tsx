@@ -164,7 +164,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         )}
       </Box>
 
-      {/* Color Scale Section */}
+      {/* Legend Section */}
       {valueRange && valueRange.min !== null && valueRange.max !== null && (
         <Box
           sx={{
@@ -176,7 +176,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
         >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
             <Typography variant="caption" sx={{ fontWeight: 600, color: '#2C3E50', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Color Scale
+              Legend
             </Typography>
             <Tooltip title="Colors represent values across all ICBs for this metric. Lighter = lower, darker = higher" arrow>
               <InfoOutlinedIcon sx={{ fontSize: '14px', color: '#999', cursor: 'help' }} />
