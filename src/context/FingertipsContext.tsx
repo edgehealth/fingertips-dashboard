@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { apiService } from '../services/fingertipsApi';
-import HospitalBedGame from '../pages/Fingertips/components/HospitalBedGame/HospitalBedGame';
 
 export interface NHSDataPoint {
   value_note: string;
@@ -69,21 +68,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }}>
       {children}
       
-      {gameVisible && (
-        <HospitalBedGame 
-          onRetry={error ? loadData : undefined}
-          onClose={() => setGameVisible(false)}
-          showCloseButton={true}
-          message={
-            error 
-              ? "Connection lost. Play while we reconnect to the NHS data..."
-              : loading
-              ? "Loading NHS data. Play while you wait!"
-              : "Data loaded! Close this when you're done playing."
-          }
-        />
-      )}
-    </NHSContext.Provider>
+      </NHSContext.Provider>
   );
 };
 
