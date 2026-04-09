@@ -1,46 +1,135 @@
-# Getting Started with Create React App
+# Fingertips Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based health data visualisation tool built by Edge Health that displays performance indicators across England's Integrated Care Boards (ICBs). It provides an interactive map, line charts, and filtering tools for exploring NHS health metrics over time.
 
-## Available Scripts
+**Live site:** [https://edgehealth.github.io/fingertips-dashboard](https://edgehealth.github.io/fingertips-dashboard)
 
-In the project directory, you can run:
+## Tech Stack
 
-### `npm start`
+- **Framework:** React 19 + TypeScript
+- **UI:** Material-UI (MUI 7), Emotion, styled-components
+- **Charts:** Nivo (line, bar), Recharts
+- **Build:** Create React App
+- **Deployment:** GitHub Pages via GitHub Actions
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Getting Started
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+npm install
+npm start       # Runs on localhost:3000
+npm run build   # Production build
+```
 
-### `npm test`
+## API Connection
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The dashboard connects to a custom Azure-hosted backend that aggregates Fingertips health data.
 
-### `npm run build`
+**Base URL:**
+```
+https://get-fingertips-data-akateqfdbxepgcht.uksouth-01.azurewebsites.net/api
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Authentication:** API key passed as a `code` query parameter.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Endpoints:**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Endpoint               | Description                        |
+|------------------------|------------------------------------|
+| `/indicators`          | Fetches all health indicator data  |
+| `/indicator_metadata`  | Retrieves indicator metadata       |
 
-### `npm run eject`
+The API service lives in [`src/services/fingertipsApi.ts`](src/services/fingertipsApi.ts). API base URL and key are configured via environment variables:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+REACT_APP_DASH_API_BASE_URL
+REACT_APP_DASH_API_KEY
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+In production, these are injected from GitHub Secrets during the CI build.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Data Structure
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The API returns data in the following shape:
 
-## Learn More
+```typescript
+{
+  total_records: number;
+  data: IndicatorData[];
+}
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Each `IndicatorData` record contains:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Field                                    | Description                                          |
+|------------------------------------------|------------------------------------------------------|
+| `indicator_id`                           | Unique ID for the health metric                      |
+| `indicator_name`                         | Human-readable metric name                           |
+| `area_code`                              | Geographic code (e.g. `E92000001` for England)       |
+| `area_name`                              | Human-readable area name (ICB name, "England", etc.) |
+| `area_type`                              | Geography level (England, ICB, region)                |
+| `sex`                                    | Sex filter                                           |
+| `age`                                    | Age group filter                                     |
+| `time_period`                            | Reporting period (e.g. `2023/24`)                    |
+| `value`                                  | The metric value                                     |
+| `count`                                  | Numerator count                                      |
+| `denominator`                            | Denominator for rate calculations                    |
+| `value_note`                             | Category label (e.g. "Prevention", "Digital")        |
+| `compared_to_england_value_or_percentiles` | Comparison against national benchmark              |
+| `time_period_sortable`                   | Numeric field for chronological ordering             |
+
+Full type definitions are in [`src/types/API.ts`](src/types/API.ts).
+
+## Geographic Data
+
+The map uses two GeoJSON boundary files stored locally in [`src/data/`](src/data/):
+
+| File                    | Description                  |
+|-------------------------|------------------------------|
+| `icb-boundaries.json`   | ICB geographic boundaries    |
+| `sicb-boundaries.json`  | Sub-ICB geographic boundaries|
+
+These contain `MultiPolygon` features with properties like `icb23cd` (ICB code) and `icb23nm` (ICB name), which are matched against the API's `area_code` field to render data on the map.
+
+## Key Features
+
+- **Interactive ICB Map** — SVG map colour-coded by metric value (light-to-dark blue gradient). Click an ICB to select it.
+- **Metric Selector** — Dropdown grouped by category (`value_note`), dynamically populated from the API data.
+- **Year Slider** — Navigate between available time periods for the selected metric.
+- **Line Chart** — Compare a selected ICB's trend against the England average over time.
+- **Sidebar Details** — Shows the selected ICB's value, England average, and value range for the chosen metric/year.
+- **Responsive Layout** — Adapts to mobile, tablet, and desktop breakpoints.
+
+## Project Structure
+
+```
+src/
+├── context/FingertipsContext.tsx    # Global data context (API fetch + state)
+├── services/fingertipsApi.ts       # API client
+├── pages/Fingertips/
+│   ├── Fingertips.tsx              # Main page
+│   ├── hooks/                      # useFilter, useMap custom hooks
+│   ├── utils/                      # Date sorting utilities
+│   └── components/
+│       ├── HeaderBanner/           # Top banner with logo & title
+│       ├── FilterPanel/            # Metric selector
+│       └── ChartPanel/
+│           ├── Charts/             # ICBLineChart, ICBMap, MapColorLegend
+│           ├── Petals/             # Map + sidebar layout containers
+│           └── SharedComponents/   # YearSlider, MapSidebar, DHSCLogo
+├── types/                          # TypeScript type definitions
+├── theme/                          # MUI theme, colours, typography
+├── data/                           # GeoJSON boundary files
+└── assets/                         # Images & logos
+```
+
+## Deployment
+
+Deployment is automated via GitHub Actions ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)):
+
+1. Triggered on push to `master`
+2. Installs dependencies and builds
+3. Deploys the `build/` folder to GitHub Pages
+
+Required GitHub Secrets:
+- `REACT_APP_DASH_API_BASE_URL`
+- `REACT_APP_DASH_API_KEY`
