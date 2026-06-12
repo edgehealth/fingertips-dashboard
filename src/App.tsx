@@ -9,21 +9,30 @@ const basename = process.env.PUBLIC_URL || '/';
 
 function App() {
   return (
-    <FingertipsProvider>
-      <BrowserRouter basename={basename}>
-        <div className="App">
-          <Routes>
-            <Route path="/" element={<Navigate to="/cyp" replace />} />
-            <Route path="/cyp" element={<Fingertips section={sections.cyp} />} />
-            <Route
-              path="/early-cancer"
-              element={<Fingertips section={sections['early-cancer']} />}
-            />
-            <Route path="*" element={<Navigate to="/cyp" replace />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </FingertipsProvider>
+    <BrowserRouter basename={basename}>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Navigate to="/cyp" replace />} />
+          <Route
+            path="/cyp"
+            element={
+              <FingertipsProvider category={sections.cyp.category}>
+                <Fingertips section={sections.cyp} />
+              </FingertipsProvider>
+            }
+          />
+          <Route
+            path="/early-cancer"
+            element={
+              <FingertipsProvider category={sections['early-cancer'].category}>
+                <Fingertips section={sections['early-cancer']} />
+              </FingertipsProvider>
+            }
+          />
+          <Route path="*" element={<Navigate to="/cyp" replace />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
