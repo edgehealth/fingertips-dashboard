@@ -3,8 +3,14 @@ import { Box, CircularProgress } from '@mui/material';
 import HeaderContainer from '../Fingertips/components/HeaderBanner/HeaderContainer';
 import ChartPanel from './components/ChartPanel/ChartPanel';
 import { useNHSData } from '../../context/FingertipsContext';
+import { SectionConfig } from '../../config/sections';
+import { colors } from '../../theme';
 
-const Fingertips: React.FC = () => {
+interface FingertipsProps {
+  section: SectionConfig;
+}
+
+const Fingertips: React.FC<FingertipsProps> = ({ section }) => {
   const { loading, error } = useNHSData();
 
   if (loading) {
@@ -12,13 +18,13 @@ const Fingertips: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          backgroundColor: '#f0e0fb',
+          backgroundColor: section.backgroundColor,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        <CircularProgress sx={{ color: '#7b2cbf' }} />
+        <CircularProgress sx={{ color: colors.secondary.purple }} />
       </Box>
     );
   }
@@ -28,7 +34,7 @@ const Fingertips: React.FC = () => {
       <Box
         sx={{
           minHeight: '100vh',
-          backgroundColor: '#f0e0fb',
+          backgroundColor: section.backgroundColor,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -51,7 +57,7 @@ const Fingertips: React.FC = () => {
           xs: 'auto',
           lg: '100vh',
         },
-        backgroundColor: '#f0e0fb',
+        backgroundColor: section.backgroundColor,
         display: 'flex',
         flexDirection: 'column',
         overflow: {
@@ -60,7 +66,7 @@ const Fingertips: React.FC = () => {
         },
       }}
     >
-      <HeaderContainer />
+      <HeaderContainer section={section} />
       <Box
         sx={{
           padding: {

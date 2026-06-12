@@ -15,6 +15,8 @@ export const colors = {
     white: '#ffffff',
     grey: '#575756',
     lightPink: '#f0e0fb',
+    lightCyan: '#d9f0f1',
+    purple: '#7b2cbf',
   },
 
   // Semantic colors (for common use cases)
@@ -47,6 +49,8 @@ export const colorsRGB: Record<string, string> = {
   white: '0, 0, 0',
   grey: '87, 87, 86',
   lightPink: '240, 224, 251',
+  lightCyan: '217, 240, 241',
+  purple: '123, 44, 191',
 };
 
 export default colors;
