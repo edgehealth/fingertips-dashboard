@@ -21,7 +21,7 @@ export interface NHSContextType {
 
 const NHSContext = createContext<NHSContextType | undefined>(undefined);
 
-export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FingertipsProvider: React.FC<{ children: React.ReactNode; category: string }> = ({ children, category }) => {
   const [data, setData] = useState<NHSDataPoint[]>([]);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setError(false);
     setGameVisible(true);
     try {
-      const response = await apiService.getIndicatorData();
+      const response = await apiService.getIndicatorData(category);
       
       const transformedData: NHSDataPoint[] = response.data.map((item: any) => ({
         area_code: item.area_code,
@@ -42,7 +42,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         indicator_name: item.indicator_name,
         time_period: item.time_period,
         time_period_sortable: item.time_period_sortable,
-        value_note: item.value_note || 'Other', 
+        value_note: item.value_note || 'Other',
       }));
       
       setData(transformedData);
@@ -56,7 +56,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [category]);
 
   return (
     <NHSContext.Provider value={{
@@ -67,8 +67,7 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       setSelectedRegion,
     }}>
       {children}
-      
-      </NHSContext.Provider>
+    </NHSContext.Provider>
   );
 };
 

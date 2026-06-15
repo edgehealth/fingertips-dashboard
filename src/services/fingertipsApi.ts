@@ -35,8 +35,10 @@ export interface IndicatorMetadataResponse {
   indicators: IndicatorMetadata[];
 }
 
-const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
-  const url = `${API_BASE_URL}${endpoint}?code=${API_KEY}`;
+const fetchFromApi = async <T>(endpoint: string, category?: string): Promise<T> => {
+  const url = category
+    ? `${API_BASE_URL}${endpoint}?code=${API_KEY}&category=${category}`
+    : `${API_BASE_URL}${endpoint}?code=${API_KEY}`;
   
   try {
     const response = await fetch(url, {
@@ -57,8 +59,8 @@ const fetchFromApi = async <T>(endpoint: string): Promise<T> => {
 };
 
 export const apiService = {
-  getIndicatorData: (): Promise<IndicatorDataResponse> => 
-    fetchFromApi('/indicators'),
+  getIndicatorData: (category: string): Promise<IndicatorDataResponse> => 
+    fetchFromApi('/indicators', category),
 
   getIndicatorMetadata: (): Promise<IndicatorMetadataResponse> => 
     fetchFromApi('/indicator_metadata'),
