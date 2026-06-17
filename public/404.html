@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Fingertips Dashboard</title>
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // MIT License — https://github.com/rafgraph/spa-github-pages
+      // Redirects a deep-link 404 to index.html, preserving the path as a query
+      // string so the app can restore it. pathSegmentsToKeep = 1 keeps the
+      // "/fingertips-dashboard" project base path on github.io.
+      var pathSegmentsToKeep = 1;
+
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
