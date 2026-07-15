@@ -31,12 +31,22 @@ https://get-fingertips-data-akateqfdbxepgcht.uksouth-01.azurewebsites.net/api
 
 **Authentication:** API key passed as a `code` query parameter.
 
+**Versioning:** All routes are served under a `/v1` prefix.
+
 **Endpoints:**
 
-| Endpoint               | Description                        |
-|------------------------|------------------------------------|
-| `/indicators`          | Fetches all health indicator data  |
-| `/indicator_metadata`  | Retrieves indicator metadata       |
+| Endpoint                    | Description                                    |
+|-----------------------------|------------------------------------------------|
+| `/v1/indicators`            | Health indicator data by `category` (paginated)|
+| `/v1/indicators/{id}`       | All rows for a single indicator                |
+| `/v1/indicator-metadata`    | Indicator metadata (id + name)                 |
+| `/v1/genomics`              | Genomics metrics (paginated)                   |
+| `/v1/health`                | Health check                                   |
+
+Collection endpoints are paginated via `page` and `page_size` query params (max
+`page_size` 5000). The API client (`fingertipsApi.ts`) pages through automatically
+and concatenates results. Errors are returned as RFC 7807 `application/problem+json`
+with a `correlationId` for support.
 
 The API service lives in [`src/services/fingertipsApi.ts`](src/services/fingertipsApi.ts). API base URL and key are configured via environment variables:
 
@@ -49,12 +59,17 @@ In production, these are injected from GitHub Secrets during the CI build.
 
 ## Data Structure
 
-The API returns data in the following shape:
+The `/v1/indicators` endpoint returns a paginated shape:
 
 ```typescript
 {
-  total_records: number;
   data: IndicatorData[];
+  pagination: {
+    page: number;
+    page_size: number;
+    total_records: number;
+    total_pages: number;
+  };
 }
 ```
 
