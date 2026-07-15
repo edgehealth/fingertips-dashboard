@@ -1,6 +1,9 @@
 const API_BASE_URL = process.env.REACT_APP_DASH_API_BASE_URL;
 const API_KEY = process.env.REACT_APP_DASH_API_KEY;
 
+// API version prefix. The backend serves all routes under /api/v1/...
+const API_VERSION = 'v1';
+
 export interface IndicatorData {
   indicator_id: number;
   indicator_name: string;
@@ -21,9 +24,21 @@ export interface IndicatorData {
   time_period_range: string;
 }
 
-export interface IndicatorDataResponse {
+export interface Pagination {
+  page: number;
+  page_size: number;
   total_records: number;
+  total_pages: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: Pagination;
+}
+
+export interface IndicatorDataResponse {
   data: IndicatorData[];
+  pagination: Pagination;
 }
 
 export interface IndicatorMetadata {
@@ -35,33 +50,89 @@ export interface IndicatorMetadataResponse {
   indicators: IndicatorMetadata[];
 }
 
-const fetchFromApi = async <T>(endpoint: string, category?: string): Promise<T> => {
-  const url = category
-    ? `${API_BASE_URL}${endpoint}?code=${API_KEY}&category=${category}`
-    : `${API_BASE_URL}${endpoint}?code=${API_KEY}`;
-  
+// RFC 7807 problem detail returned by the API on error.
+export interface ProblemDetail {
+  type?: string;
+  title: string;
+  status: number;
+  detail: string;
+  instance?: string;
+  correlationId?: string;
+}
+
+// How many records to request per page when paging through a collection.
+const PAGE_SIZE = 5000;
+
+const buildUrl = (endpoint: string, params: Record<string, string> = {}): string => {
+  const search = new URLSearchParams({ code: API_KEY ?? '', ...params });
+  return `${API_BASE_URL}/${API_VERSION}${endpoint}?${search.toString()}`;
+};
+
+const fetchJson = async <T>(url: string): Promise<T> => {
   try {
     const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
-    
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // The API returns RFC 7807 problem+json on error; surface its detail if present.
+      let message = `HTTP error! status: ${response.status}`;
+      try {
+        const problem = (await response.json()) as ProblemDetail;
+        if (problem?.detail) {
+          message = `${problem.title ?? 'Error'}: ${problem.detail}`;
+          if (problem.correlationId) message += ` (correlationId: ${problem.correlationId})`;
+        }
+      } catch {
+        // response had no JSON body; keep the generic message
+      }
+      throw new Error(message);
     }
 
-    return await response.json();
+    return (await response.json()) as T;
   } catch (error) {
-    console.error(`API request failed for ${endpoint}:`, error instanceof Error ? error.message : 'Unknown error');
+    console.error(`API request failed for ${url}:`, error instanceof Error ? error.message : 'Unknown error');
     throw error;
   }
 };
 
-export const apiService = {
-  getIndicatorData: (category: string): Promise<IndicatorDataResponse> => 
-    fetchFromApi('/indicators', category),
+/**
+ * Fetch every page of a paginated collection endpoint and concatenate the results.
+ * The backend caps page_size, so large collections come back across several pages.
+ */
+const fetchAllPages = async (
+  endpoint: string,
+  params: Record<string, string> = {}
+): Promise<IndicatorData[]> => {
+  const all: IndicatorData[] = [];
+  let page = 1;
+  let totalPages = 1;
 
-  getIndicatorMetadata: (): Promise<IndicatorMetadataResponse> => 
-    fetchFromApi('/indicator_metadata'),
+  do {
+    const url = buildUrl(endpoint, { ...params, page: String(page), page_size: String(PAGE_SIZE) });
+    const response = await fetchJson<PaginatedResponse<IndicatorData>>(url);
+    all.push(...response.data);
+    totalPages = response.pagination?.total_pages ?? 1;
+    page += 1;
+  } while (page <= totalPages);
+
+  return all;
+};
+
+export const apiService = {
+  getIndicatorData: async (category: string): Promise<IndicatorDataResponse> => {
+    const data = await fetchAllPages('/indicators', { category });
+    return {
+      data,
+      pagination: {
+        page: 1,
+        page_size: data.length,
+        total_records: data.length,
+        total_pages: 1,
+      },
+    };
+  },
+
+  getIndicatorMetadata: (): Promise<IndicatorMetadataResponse> =>
+    fetchJson<IndicatorMetadataResponse>(buildUrl('/indicator-metadata')),
 };
