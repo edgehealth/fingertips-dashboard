@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Link as MuiLink } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import HeaderContainer from '../Fingertips/components/HeaderBanner/HeaderContainer';
 import ChartPanel from './components/ChartPanel/ChartPanel';
 import { useNHSData } from '../../context/FingertipsContext';
@@ -83,6 +84,27 @@ const Fingertips: React.FC<FingertipsProps> = ({ section }) => {
         }}
       >
         <ChartPanel />
+      </Box>
+      <Box
+        component="footer"
+        sx={{
+          flexShrink: 0,
+          textAlign: 'center',
+          py: '0.5rem',
+          px: '1rem',
+        }}
+      >
+        <MuiLink
+          component={RouterLink}
+          to="/accessibility"
+          sx={{
+            color: colors.primary.darkBlue,
+            fontSize: '0.8rem',
+            fontWeight: 600,
+          }}
+        >
+          Accessibility statement
+        </MuiLink>
       </Box>
     </Box>
   );

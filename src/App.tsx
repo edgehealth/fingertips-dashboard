@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { FingertipsProvider } from './context/FingertipsContext';
 import Fingertips from './pages/Fingertips/Fingertips';
+import AccessibilityStatement from './pages/Accessibility/AccessibilityStatement';
 import { sections } from './config/sections';
 import './App.css';
 
@@ -29,6 +30,7 @@ function App() {
               </FingertipsProvider>
             }
           />
+          <Route path="/accessibility" element={<AccessibilityStatement />} />
           <Route path="*" element={<Navigate to="/cyp" replace />} />
         </Routes>
       </div>
