@@ -162,16 +162,28 @@ const ICBLineChart: React.FC<ICBLineChartProps> = ({ filterState }) => {
     );
   }
 
+  const chartSummary =
+    `Line chart of ${selectedMetricDetails.name} over time. ` +
+    chartData
+      .map((series: any) => {
+        const pts = series.data;
+        if (!pts || pts.length === 0) return `${series.id}: no data.`;
+        const first = pts[0];
+        const last = pts[pts.length - 1];
+        return `${series.id}: from ${first.y} in ${first.x} to ${last.y} in ${last.x}.`;
+      })
+      .join(' ');
+
   return (
-    <Box sx={{ 
-      width: '100%', 
+    <Box sx={{
+      width: '100%',
       height: '100%',
       minHeight: { xs: '250px', lg: '300px' },
       backgroundColor: 'transparent',
       display: 'flex',
       flexDirection: 'column'
     }}>
-      <Box sx={{ flex: 1, minHeight: 0, height: '100%' }}>
+      <Box sx={{ flex: 1, minHeight: 0, height: '100%' }} role="img" aria-label={chartSummary}>
         <ResponsiveLine
           data={chartData}
           margin={isMobile 

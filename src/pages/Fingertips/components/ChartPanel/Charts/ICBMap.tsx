@@ -153,14 +153,24 @@ const getRegionColor = (icbCode: string) => {
   viewBox="0 0 500 600"  // Start at 0,0 and increase height
   preserveAspectRatio="xMidYMid meet"
   style={{ background: 'transparent', display: 'block' }}
+  role="group"
+  aria-label="Map of Integrated Care Boards in England. Select a region to view its value for the chosen metric."
 >
           {geoData.map((feature, index) => {
             const pathData = coordinatesToPath(feature.geometry.coordinates);
             const icbCode = feature.properties.icb23cd;
             const icbName = feature.properties.icb23nm;
-            
+
             if (!pathData) return null;
-            
+
+            const regionValue = getValueForArea ? getValueForArea(icbCode) : undefined;
+            const hasValue =
+              regionValue !== undefined && regionValue !== null && !isNaN(regionValue);
+            const isSelected = selectedICB === icbCode;
+            const ariaLabel = `${icbName}: ${
+              hasValue ? regionValue!.toFixed(1) : 'no data available'
+            }`;
+
             return (
               <path
                 key={`${icbCode}-${index}`}
@@ -168,14 +178,26 @@ const getRegionColor = (icbCode: string) => {
                 fill={getRegionColor(icbCode)}
                 stroke="#2C3E50"
                 strokeWidth="0.5"
-                style={{ 
+                role="button"
+                tabIndex={0}
+                aria-label={ariaLabel}
+                aria-pressed={isSelected}
+                style={{
                   cursor: 'pointer',
                   transition: 'fill 0.2s ease, opacity 0.2s ease',
                   opacity: hoveredICB && hoveredICB !== icbName ? 0.7 : 1,
                 }}
                 onMouseEnter={() => mapHover(icbName)}
                 onMouseLeave={mapLeave}
+                onFocus={() => mapHover(icbName)}
+                onBlur={mapLeave}
                 onClick={() => handleICBClick(icbCode, icbName)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleICBClick(icbCode, icbName);
+                  }
+                }}
               />
             );
           })}

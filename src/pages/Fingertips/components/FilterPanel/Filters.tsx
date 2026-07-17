@@ -100,7 +100,7 @@ const MetricFilter: React.FC<MetricFilterProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: '#999',
+            color: '#767676',
             fontSize: '12px',
             fontStyle: 'italic',
           }}
@@ -118,6 +118,7 @@ const MetricFilter: React.FC<MetricFilterProps> = ({
           value={selectedMetric || ''}
           onChange={handleChange}
           displayEmpty
+          inputProps={{ 'aria-label': 'Select a health metric to display' }}
           sx={{
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(5px)',

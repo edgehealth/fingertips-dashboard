@@ -11,6 +11,8 @@ interface SectionNavProps {
 const SectionNav: React.FC<SectionNavProps> = ({ activeSectionId }) => {
   return (
     <Box
+      component="nav"
+      aria-label="Dashboard sections"
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -23,6 +25,7 @@ const SectionNav: React.FC<SectionNavProps> = ({ activeSectionId }) => {
           <Link
             key={section.id}
             to={section.path}
+            aria-current={isActive ? 'page' : undefined}
             style={{ textDecoration: 'none' }}
           >
             <Box

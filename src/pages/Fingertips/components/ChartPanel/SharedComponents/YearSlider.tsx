@@ -57,6 +57,7 @@ const YearSlider: React.FC<YearSliderProps> = ({
       >
         <Typography
           variant="body2"
+          id="year-slider-label"
           sx={{
             color: '#666',
             textAlign: 'center',
@@ -73,7 +74,7 @@ const YearSlider: React.FC<YearSliderProps> = ({
           <InfoOutlinedIcon
             sx={{
               fontSize: '14px',
-              color: '#999',
+              color: '#767676',
               cursor: 'help',
               '&:hover': {
                 color: '#666',
@@ -85,6 +86,8 @@ const YearSlider: React.FC<YearSliderProps> = ({
       
       <Typography
         variant="h6"
+        component="p"
+        aria-live="polite"
         sx={{
           color: '#2C3E50',
           textAlign: 'center',
@@ -100,6 +103,9 @@ const YearSlider: React.FC<YearSliderProps> = ({
         <Slider
           value={currentIndex}
           onChange={handleSliderChange}
+          aria-labelledby="year-slider-label"
+          getAriaValueText={(index) => indexToYear[index] || ''}
+          valueLabelFormat={(index) => indexToYear[index] || ''}
           min={0}
           max={sortedYears.length - 1}
           step={1}
@@ -149,10 +155,10 @@ const YearSlider: React.FC<YearSliderProps> = ({
           px: 1,
         }}
       >
-        <Typography variant="caption" sx={{ color: '#999', fontSize: '9px' }}>
+        <Typography variant="caption" sx={{ color: '#767676', fontSize: '9px' }}>
           {sortedYears[0]} (Earliest)
         </Typography>
-        <Typography variant="caption" sx={{ color: '#999', fontSize: '9px' }}>
+        <Typography variant="caption" sx={{ color: '#767676', fontSize: '9px' }}>
           {sortedYears[sortedYears.length - 1]} (Latest)
         </Typography>
       </Box>

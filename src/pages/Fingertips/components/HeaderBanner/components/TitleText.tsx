@@ -26,9 +26,11 @@ const TitleText: React.FC<TitleTextProps> = ({
       }}
     >
       <Box
+        component="h1"
         sx={{
           color: colors.secondary.white,
           fontFamily: typography.fonts.body,
+          margin: 0,
         }}
       >
         <Typography

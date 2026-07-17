@@ -14,6 +14,7 @@ interface HeaderContainerProps {
 const HeaderContainer: React.FC<HeaderContainerProps> = ({ section }) => {
   return (
     <Box
+      component="header"
       sx={{
         padding: '0.5rem',
         backgroundColor: colors.primary.darkBlue,

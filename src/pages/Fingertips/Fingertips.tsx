@@ -68,6 +68,8 @@ const Fingertips: React.FC<FingertipsProps> = ({ section }) => {
     >
       <HeaderContainer section={section} />
       <Box
+        component="main"
+        id="main-content"
         sx={{
           padding: {
             xs: '0.5rem',
