@@ -2,6 +2,17 @@
   text-align: center;
 }
 
+/* Visible keyboard focus indicator for interactive SVG map regions */
+svg path[role='button']:focus {
+  outline: none;
+}
+svg path[role='button']:focus-visible {
+  outline: 3px solid #161658;
+  outline-offset: 1px;
+  stroke: #161658;
+  stroke-width: 1.5;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

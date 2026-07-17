@@ -38,6 +38,7 @@ const DashboardInfoTooltip: React.FC = () => {
     >
       <IconButton
         size="small"
+        aria-label="About this dashboard"
         sx={{
           color: 'white',
           '&:hover': {

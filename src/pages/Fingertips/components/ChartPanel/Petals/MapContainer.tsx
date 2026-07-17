@@ -86,6 +86,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography
             variant="h6"
+            component="h2"
             sx={{
               color: '#2C3E50',
               fontWeight: 600,
@@ -125,6 +126,7 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         {isMobile && (
           <IconButton
             onClick={() => setDrawerOpen(true)}
+            aria-label="Open map details"
             sx={{
               backgroundColor: '#6c63ff',
               color: 'white',
@@ -181,10 +183,10 @@ const MapContainer: React.FC<MapContainerProps> = ({ filterState }) => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, color: '#2C3E50' }}>
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 600, color: '#2C3E50' }}>
             Map Details
           </Typography>
-          <IconButton onClick={() => setDrawerOpen(false)}>
+          <IconButton onClick={() => setDrawerOpen(false)} aria-label="Close map details">
             <CloseIcon />
           </IconButton>
         </Box>

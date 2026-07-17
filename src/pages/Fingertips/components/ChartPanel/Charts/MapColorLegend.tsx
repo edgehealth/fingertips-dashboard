@@ -95,7 +95,7 @@ const MapColorLegend: React.FC<MapColorLegendProps> = ({
               <Typography variant="caption" sx={{ fontSize: '13px', fontWeight: 700, color: '#2C3E50', display: 'block' }}>
                 {valueRange.min.toFixed(1)}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '9px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <Typography variant="caption" sx={{ fontSize: '9px', color: '#767676', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Lowest
               </Typography>
             </Box>
@@ -103,7 +103,7 @@ const MapColorLegend: React.FC<MapColorLegendProps> = ({
               <Typography variant="caption" sx={{ fontSize: '13px', fontWeight: 700, color: '#2C3E50', display: 'block' }}>
                 {valueRange.max.toFixed(1)}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '9px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <Typography variant="caption" sx={{ fontSize: '9px', color: '#767676', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Highest
               </Typography>
             </Box>
@@ -125,7 +125,7 @@ const MapColorLegend: React.FC<MapColorLegendProps> = ({
           </Typography>
         </>
       ) : (
-        <Typography variant="caption" sx={{ color: '#999', fontStyle: 'italic', fontSize: '11px' }}>
+        <Typography variant="caption" sx={{ color: '#767676', fontStyle: 'italic', fontSize: '11px' }}>
           Select a metric to view scale
         </Typography>
       )}

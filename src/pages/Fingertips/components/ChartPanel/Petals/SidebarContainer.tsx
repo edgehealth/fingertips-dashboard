@@ -76,6 +76,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
         >
           <Typography
             variant="h6"
+            component="h2"
             sx={{
               color: '#2C3E50',
               fontWeight: 600,
@@ -152,6 +153,7 @@ const SidebarContainer: React.FC<SidebarContainerProps> = ({ filterState }) => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography
               variant="h6"
+              component="h2"
               sx={{
                 color: '#2C3E50',
                 fontWeight: 600,

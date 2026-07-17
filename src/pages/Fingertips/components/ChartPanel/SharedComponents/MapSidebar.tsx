@@ -106,6 +106,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
           <>
             <Typography
               variant="h3"
+              component="p"
               sx={{
                 color: '#E91E63',
                 fontWeight: 700,
@@ -119,7 +120,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
             <Typography
               variant="caption"
               sx={{
-                color: '#999',
+                color: '#767676',
                 fontSize: '11px',
                 display: 'block',
               }}
@@ -131,6 +132,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
           <>
             <Typography
               variant="h3"
+              component="p"
               sx={{
                 color: '#4ECDC4',
                 fontWeight: 700,
@@ -144,7 +146,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
             <Typography
               variant="caption"
               sx={{
-                color: '#999',
+                color: '#767676',
                 fontSize: '11px',
                 display: 'block',
               }}
@@ -154,10 +156,10 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
           </>
         ) : (
           <>
-            <Typography variant="h3" sx={{ color: '#999', fontSize: '48px', lineHeight: 1 }}>
+            <Typography variant="h3" component="p" aria-hidden="true" sx={{ color: '#767676', fontSize: '48px', lineHeight: 1 }}>
               --
             </Typography>
-            <Typography variant="caption" sx={{ color: '#999', fontSize: '11px', display: 'block', mt: 1 }}>
+            <Typography variant="caption" sx={{ color: '#767676', fontSize: '11px', display: 'block', mt: 1 }}>
               No data available
             </Typography>
           </>
@@ -179,7 +181,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
               Legend
             </Typography>
             <Tooltip title="Colors represent values across all ICBs for this metric. Lighter = lower, darker = higher" arrow>
-              <InfoOutlinedIcon sx={{ fontSize: '14px', color: '#999', cursor: 'help' }} />
+              <InfoOutlinedIcon sx={{ fontSize: '14px', color: '#767676', cursor: 'help' }} />
             </Tooltip>
           </Box>
 
@@ -221,7 +223,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
               <Typography variant="caption" sx={{ fontSize: '12px', fontWeight: 700, color: '#2C3E50', display: 'block' }}>
                 {valueRange.min.toFixed(1)}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '9px', color: '#999' }}>
+              <Typography variant="caption" sx={{ fontSize: '9px', color: '#767676' }}>
                 Lowest
               </Typography>
             </Box>
@@ -229,7 +231,7 @@ const MapSidebar: React.FC<MapSidebarProps> = ({
               <Typography variant="caption" sx={{ fontSize: '12px', fontWeight: 700, color: '#2C3E50', display: 'block' }}>
                 {valueRange.max.toFixed(1)}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '9px', color: '#999' }}>
+              <Typography variant="caption" sx={{ fontSize: '9px', color: '#767676' }}>
                 Highest
               </Typography>
             </Box>
