@@ -112,19 +112,38 @@ export const useFilter = () => {
 
   const averageValue = useMemo(() => {
     if (!selectedMetric || !selectedYear) return undefined;
-    
-    const filteredData = data.filter(item => 
+
+    const filteredData = data.filter(item =>
       item.indicator_name === selectedMetric &&
       item.time_period === selectedYear &&
       item.value !== undefined &&
       item.value !== null &&
       !isNaN(item.value)
     );
-    
+
     if (filteredData.length === 0) return undefined;
-    
-    const sum = filteredData.reduce((acc, item) => acc + item.value, 0);
-    return sum / filteredData.length;
+
+    // Prefer the actual England value from the data (a population-weighted rate)
+    // over a simple mean of the ICB values. The England row is published as
+    // area_code E92000001 / area_name "England".
+    const englandRow = filteredData.find(item =>
+      item.area_code === 'E92000001' ||
+      item.area_name?.toLowerCase() === 'england'
+    );
+
+    if (englandRow) return englandRow.value;
+
+    // Fallback: no England row present, so approximate with a simple mean of the
+    // remaining area values. Note this is unweighted and only an approximation.
+    const icbData = filteredData.filter(item =>
+      item.area_code !== 'E92000001' &&
+      item.area_name?.toLowerCase() !== 'england'
+    );
+
+    if (icbData.length === 0) return undefined;
+
+    const sum = icbData.reduce((acc, item) => acc + item.value, 0);
+    return sum / icbData.length;
   }, [data, selectedMetric, selectedYear]);
 
   const selectedMetricDetails = selectedMetric 
