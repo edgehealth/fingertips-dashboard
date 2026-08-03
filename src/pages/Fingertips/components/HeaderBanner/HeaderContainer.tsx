@@ -36,7 +36,6 @@ const HeaderContainer: React.FC<HeaderContainerProps> = ({ section }) => {
         <TitleText
           mainTitle={section.mainTitle}
           subtitle={section.subtitle}
-          workInProgress={section.id === 'early-cancer'}
         />
         <SectionNav activeSectionId={section.id} />
         <DashboardInfoTooltip />

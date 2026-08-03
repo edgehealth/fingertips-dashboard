@@ -5,13 +5,11 @@ import { colors, typography } from '../../../../../theme';
 interface TitleTextProps {
   mainTitle?: string;
   subtitle?: string;
-  workInProgress?: boolean;
 }
 
 const TitleText: React.FC<TitleTextProps> = ({
   mainTitle = "Edge Health",
-  subtitle = "Children & Young People Health",
-  workInProgress = false
+  subtitle = "Children & Young People Health"
 }) => {
   return (
     <Box
@@ -54,27 +52,6 @@ const TitleText: React.FC<TitleTextProps> = ({
           </Typography>
         )}
       </Box>
-      {workInProgress && (
-        <Box
-          component="span"
-          sx={{
-            ml: '1rem',
-            px: '0.625rem',
-            py: '0.25rem',
-            borderRadius: '0.375rem',
-            backgroundColor: colors.secondary.orange,
-            color: colors.primary.darkBlue,
-            fontFamily: typography.fonts.body,
-            fontSize: typography.fontSizes.sm,
-            fontWeight: typography.fontWeights.bold,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          🚧 Work in Progress
-        </Box>
-      )}
     </Box>
   );
 };
