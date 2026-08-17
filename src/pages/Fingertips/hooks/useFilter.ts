@@ -52,8 +52,12 @@ export const useFilter = () => {
   }, [data, selectedMetric]);
 
   useEffect(() => {
-    if (availableMetrics.length > 0 && !selectedMetric) {
+    if (availableMetrics.length === 0) return;
+    // Also covers a selection carried over from another section's dataset
+    // (the component is not remounted when switching between sections).
+    if (!selectedMetric || !availableMetrics.some(m => m.id === selectedMetric)) {
       setSelectedMetric(availableMetrics[0].id);
+      setSelectedYear(null);
     }
   }, [availableMetrics, selectedMetric]);
 
