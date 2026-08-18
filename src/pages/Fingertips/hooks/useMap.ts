@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import icbBoundaries from '../../../data/icb-boundaries.json';
 import type { 
   GeoFeature, 
@@ -73,7 +73,7 @@ export const useMap = (): MapHookReturn => {
   };
 
   // Project geographic coordinates to SVG coordinates
-  const projectToSVG = (lng: number, lat: number) => {
+  const projectToSVG = useCallback((lng: number, lat: number) => {
     if (!mapBounds) return { x: 0, y: 0 };
     
     const width = 500;
@@ -83,10 +83,10 @@ export const useMap = (): MapHookReturn => {
     const y = height - ((lat - mapBounds.minLat) / (mapBounds.maxLat - mapBounds.minLat)) * height;
     
     return { x, y };
-  };
+  }, [mapBounds]);
 
   // Convert GeoJSON coordinates to SVG path string
-  const coordinatesToPath = (coordinates: number[][][] | number[][][][]) => {
+  const coordinatesToPath = useCallback((coordinates: number[][][] | number[][][][]) => {
     const paths: string[] = [];
     
     const polygons = coordinates[0] && Array.isArray(coordinates[0][0]) && Array.isArray(coordinates[0][0][0])
@@ -109,7 +109,7 @@ export const useMap = (): MapHookReturn => {
     });
     
     return paths.join(' ');
-  };
+  }, [projectToSVG]);
 
   // Event handlers
   const handleICBClick = (icbCode: string, icbName: string) => {

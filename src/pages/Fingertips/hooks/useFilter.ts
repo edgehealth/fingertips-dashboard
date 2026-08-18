@@ -1,10 +1,22 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNHSData } from '../../../context/FingertipsContext';
+import { applyIcbCodeAliases } from '../utils/icbCodeAliases';
 
 interface MetricOption {
   id: string;
   name: string;
   category: string;
+}
+
+const asNumber = (n: number | null | undefined): number | null =>
+  typeof n === 'number' && !isNaN(n) ? n : null;
+
+export interface AreaDetails {
+  value: number;
+  count: number | null;
+  denominator: number | null;
+  previousValue: number | null;
+  previousPeriod: string | null;
 }
 
 export const useFilter = () => {
@@ -73,25 +85,60 @@ export const useFilter = () => {
     }
   }, [selectedMetric, availableYears]);
 
-  const filteredData = useMemo(() => {
+  const areaDetails = useMemo((): { [areaCode: string]: AreaDetails } => {
     if (!selectedMetric || !selectedYear) return {};
-    
-    const filtered = data.filter(item => 
-      item.indicator_name === selectedMetric &&
-      item.time_period === selectedYear &&
-      item.value !== undefined &&
-      item.value !== null &&
-      !isNaN(item.value)
-    );
-    
-    const lookup: { [areaCode: string]: number } = {};
-    
-    filtered.forEach(item => {
-      lookup[item.area_code] = item.value;
+
+    const yearIndex = availableYears.indexOf(selectedYear);
+    const previousPeriod =
+      yearIndex >= 0 && yearIndex + 1 < availableYears.length
+        ? availableYears[yearIndex + 1]
+        : null;
+
+    const lookup: { [areaCode: string]: AreaDetails } = {};
+    const previousValues: { [areaCode: string]: number } = {};
+
+    data.forEach(item => {
+      if (
+        item.indicator_name !== selectedMetric ||
+        item.value === undefined ||
+        item.value === null ||
+        isNaN(item.value)
+      ) {
+        return;
+      }
+
+      if (item.time_period === selectedYear) {
+        lookup[item.area_code] = {
+          value: item.value,
+          count: asNumber(item.count),
+          denominator: asNumber(item.denominator),
+          previousValue: null,
+          previousPeriod,
+        };
+      } else if (previousPeriod && item.time_period === previousPeriod) {
+        previousValues[item.area_code] = item.value;
+      }
     });
-    
+
+    applyIcbCodeAliases(lookup);
+    applyIcbCodeAliases(previousValues);
+
+    Object.entries(lookup).forEach(([areaCode, details]) => {
+      if (previousValues[areaCode] !== undefined) {
+        details.previousValue = previousValues[areaCode];
+      }
+    });
+
     return lookup;
-  }, [data, selectedMetric, selectedYear]);
+  }, [data, selectedMetric, selectedYear, availableYears]);
+
+  const filteredData = useMemo(() => {
+    const lookup: { [areaCode: string]: number } = {};
+    Object.entries(areaDetails).forEach(([areaCode, details]) => {
+      lookup[areaCode] = details.value;
+    });
+    return lookup;
+  }, [areaDetails]);
 
   const valueRange = useMemo(() => {
     if (!selectedMetric || !selectedYear) return { min: 0, max: 100 };
@@ -158,6 +205,10 @@ export const useFilter = () => {
     return filteredData[areaCode];
   };
 
+  const getAreaDetails = (areaCode: string): AreaDetails | undefined => {
+    return areaDetails[areaCode];
+  };
+
   const getAreaName = (areaCode: string): string | undefined => {
     const item = data.find(d => d.area_code === areaCode);
     return item?.area_name;
@@ -176,6 +227,7 @@ export const useFilter = () => {
     averageValue,
     valueRange,
     getValueForArea,
+    getAreaDetails,
     getAreaName,
     loading,
   };

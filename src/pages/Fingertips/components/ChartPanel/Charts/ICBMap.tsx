@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useMap } from '../../../../Fingertips/hooks/useMap';
+import type { AreaDetails } from '../../../hooks/useFilter';
 
 interface FilterState {
   getValueForArea: (areaCode: string) => number | undefined;
+  getAreaDetails: (areaCode: string) => AreaDetails | undefined;
+  averageValue: number | undefined;
   valueRange: { min: number; max: number } | null;
   selectedMetric: string | null;
   selectedICB: string | null;
@@ -16,6 +19,26 @@ interface ICBMapProps {
   filterState: FilterState;
 }
 
+const comparisonColor = (value: number, englandValue: number | undefined) =>
+  englandValue === undefined || value === englandValue
+    ? 'white'
+    : value > englandValue
+    ? '#81c784'
+    : '#e57373';
+
+const formatWhole = (n: number): string =>
+  Math.round(n).toLocaleString('en-GB');
+
+const describeTrend = (
+  details: { value: number; previousValue: number | null; previousPeriod: string | null }
+): string | null => {
+  if (details.previousValue === null || !details.previousPeriod) return null;
+  const diff = details.value - details.previousValue;
+  const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '▬';
+  const signed = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}`;
+  return `${arrow} ${signed} vs ${details.previousPeriod}`;
+};
+
 const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
   const {
     loading,
@@ -27,12 +50,26 @@ const ICBMap: React.FC<ICBMapProps> = ({ filterState }) => {
     handleICBLeave: mapLeave,
   } = useMap();
 
-  const { 
-    getValueForArea, 
-    valueRange, 
+  const {
+    getValueForArea,
+    getAreaDetails,
+    averageValue,
+    valueRange,
     selectedICB,
     handleICBClick,
   } = filterState;
+
+  const mapFeatures = useMemo(
+    () =>
+      geoData
+        .map(feature => ({
+          icbCode: feature.properties.icb23cd,
+          icbName: feature.properties.icb23nm,
+          pathData: coordinatesToPath(feature.geometry.coordinates),
+        }))
+        .filter(f => f.pathData),
+    [geoData, coordinatesToPath]
+  );
 
 const getRegionColor = (icbCode: string) => {
   if (selectedICB === icbCode) {
@@ -107,6 +144,13 @@ const getRegionColor = (icbCode: string) => {
   const selectedRegion = selectedICB ? geoData.find(f => f.properties.icb23cd === selectedICB) : null;
   const selectedName = selectedRegion?.properties.icb23nm || '';
 
+  const hoveredFeature = hoveredICB
+    ? mapFeatures.find(f => f.icbName === hoveredICB)
+    : null;
+  const hoveredDetails = hoveredFeature ? getAreaDetails(hoveredFeature.icbCode) : undefined;
+  const hoveredHasValue = hoveredDetails !== undefined && !isNaN(hoveredDetails.value);
+  const hoveredTrend = hoveredHasValue ? describeTrend(hoveredDetails!) : null;
+
   return (
     <div style={{ 
       width: '100%', 
@@ -117,33 +161,53 @@ const getRegionColor = (icbCode: string) => {
       
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
         {hoveredICB && (
-          <div style={{
+          <div
+            role="status"
+            style={{
             position: 'absolute',
             bottom: '10px',
             left: '50%',
             transform: 'translateX(-50%)',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: 'white',
-            padding: '6px 12px',
+              padding: '8px 14px',
             fontSize: '12px',
             borderRadius: '4px',
             zIndex: 1000,
             pointerEvents: 'none',
-            maxWidth: '180px',
-            textAlign: 'center'
-          }}>
-            {hoveredICB}
-            {(() => {
-              const hoveredRegion = geoData.find(f => f.properties.icb23nm === hoveredICB);
-              const hoveredCode = hoveredRegion?.properties.icb23cd;
-              const hoveredValue = hoveredCode && getValueForArea ? getValueForArea(hoveredCode) : undefined;
-              
-              if (hoveredValue !== undefined && hoveredValue !== null && !isNaN(hoveredValue)) {
-                return <div style={{fontSize: '10px', opacity: 0.8}}>Value: {hoveredValue.toFixed(1)}</div>;
-              } else {
-                return <div style={{fontSize: '10px', opacity: 0.8}}>No data available</div>;
-              }
-            })()}
+              maxWidth: '220px',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontWeight: 600, lineHeight: 1.3 }}>{hoveredICB}</div>
+            {hoveredHasValue ? (
+              <>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    marginTop: '2px',
+                    color: comparisonColor(hoveredDetails!.value, averageValue),
+                  }}
+                >
+                  {hoveredDetails!.value.toFixed(1)}
+                </div>
+                {hoveredTrend && (
+                  <div style={{ fontSize: '10px', opacity: 0.9, marginTop: '2px' }}>
+                    {hoveredTrend}
+                  </div>
+                )}
+                {hoveredDetails!.count !== null && hoveredDetails!.denominator !== null && (
+                  <div style={{ fontSize: '10px', opacity: 0.75, marginTop: '2px' }}>
+                    {formatWhole(hoveredDetails!.count)} of {formatWhole(hoveredDetails!.denominator)}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div style={{ fontSize: '10px', opacity: 0.8, marginTop: '2px' }}>
+                No data available
+              </div>
+            )}
           </div>
         )}
 
@@ -156,19 +220,12 @@ const getRegionColor = (icbCode: string) => {
   role="group"
   aria-label="Map of Integrated Care Boards in England. Select a region to view its value for the chosen metric."
 >
-          {geoData.map((feature, index) => {
-            const pathData = coordinatesToPath(feature.geometry.coordinates);
-            const icbCode = feature.properties.icb23cd;
-            const icbName = feature.properties.icb23nm;
-
-            if (!pathData) return null;
-
-            const regionValue = getValueForArea ? getValueForArea(icbCode) : undefined;
-            const hasValue =
-              regionValue !== undefined && regionValue !== null && !isNaN(regionValue);
+          {mapFeatures.map(({ icbCode, icbName, pathData }, index) => {
+            const details = getAreaDetails ? getAreaDetails(icbCode) : undefined;
+            const hasValue = details !== undefined && !isNaN(details.value);
             const isSelected = selectedICB === icbCode;
             const ariaLabel = `${icbName}: ${
-              hasValue ? regionValue!.toFixed(1) : 'no data available'
+              hasValue ? details!.value.toFixed(1) : 'no data available'
             }`;
 
             return (

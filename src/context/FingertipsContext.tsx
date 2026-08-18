@@ -9,6 +9,8 @@ export interface NHSDataPoint {
   indicator_name: string;
   time_period: string;
   time_period_sortable?: number;
+  count: number | null;
+  denominator: number | null;
 }
 
 export interface NHSContextType {
@@ -43,6 +45,8 @@ export const FingertipsProvider: React.FC<{ children: React.ReactNode; category:
         time_period: item.time_period,
         time_period_sortable: item.time_period_sortable,
         value_note: item.value_note || 'Other',
+        count: item.count ?? null,
+        denominator: item.denominator ?? null,
       }));
       
       setData(transformedData);

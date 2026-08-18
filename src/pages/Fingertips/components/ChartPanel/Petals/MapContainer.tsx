@@ -6,12 +6,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import FreshICBMap from '../Charts/ICBMap';
 import MapSidebar from '../SharedComponents/MapSidebar';
+import type { AreaDetails } from '../../../hooks/useFilter';
 
 interface FilterState {
   selectedMetric: string | null;
   selectedICB: string | null;
   averageValue: number | undefined;
   getValueForArea: (areaCode: string) => number | undefined;
+  getAreaDetails: (areaCode: string) => AreaDetails | undefined;
   getAreaName: (areaCode: string) => string | undefined;
   valueRange: { min: number; max: number } | null;
   handleICBClick: (icbCode: string, icbName: string) => void;
