@@ -96,41 +96,62 @@ const fetchJson = async <T>(url: string): Promise<T> => {
   }
 };
 
+const fetchPage = (
+  endpoint: string,
+  params: Record<string, string>,
+  page: number
+): Promise<PaginatedResponse<IndicatorData>> =>
+  fetchJson<PaginatedResponse<IndicatorData>>(
+    buildUrl(endpoint, { ...params, page: String(page), page_size: String(PAGE_SIZE) })
+  );
+
 /**
  * Fetch every page of a paginated collection endpoint and concatenate the results.
  * The backend caps page_size, so large collections come back across several pages.
+ * Page 1 tells us the total page count; the remaining pages are fetched in parallel.
  */
 const fetchAllPages = async (
   endpoint: string,
   params: Record<string, string> = {}
 ): Promise<IndicatorData[]> => {
-  const all: IndicatorData[] = [];
-  let page = 1;
-  let totalPages = 1;
+  const first = await fetchPage(endpoint, params, 1);
+  const totalPages = first.pagination?.total_pages ?? 1;
+  if (totalPages <= 1) return first.data;
 
-  do {
-    const url = buildUrl(endpoint, { ...params, page: String(page), page_size: String(PAGE_SIZE) });
-    const response = await fetchJson<PaginatedResponse<IndicatorData>>(url);
-    all.push(...response.data);
-    totalPages = response.pagination?.total_pages ?? 1;
-    page += 1;
-  } while (page <= totalPages);
-
-  return all;
+  const rest = await Promise.all(
+    Array.from({ length: totalPages - 1 }, (_, i) => fetchPage(endpoint, params, i + 2))
+  );
+  return first.data.concat(...rest.map((response) => response.data));
 };
 
+// Datasets already downloaded this session, keyed by category, so switching
+// sections never re-fetches. Stores the in-flight promise (not the resolved
+// value) so concurrent callers for the same category share a single download.
+const indicatorDataCache = new Map<string, Promise<IndicatorDataResponse>>();
+
 export const apiService = {
-  getIndicatorData: async (category: string): Promise<IndicatorDataResponse> => {
-    const data = await fetchAllPages('/indicators', { category });
-    return {
-      data,
-      pagination: {
-        page: 1,
-        page_size: data.length,
-        total_records: data.length,
-        total_pages: 1,
-      },
-    };
+  getIndicatorData: (category: string): Promise<IndicatorDataResponse> => {
+    const cached = indicatorDataCache.get(category);
+    if (cached) return cached;
+
+    const request = (async (): Promise<IndicatorDataResponse> => {
+      const data = await fetchAllPages('/indicators', { category });
+      return {
+        data,
+        pagination: {
+          page: 1,
+          page_size: data.length,
+          total_records: data.length,
+          total_pages: 1,
+        },
+      };
+    })();
+
+    // Don't cache failures — a retry (e.g. remounting the section) should hit the network again.
+    request.catch(() => indicatorDataCache.delete(category));
+
+    indicatorDataCache.set(category, request);
+    return request;
   },
 
   getIndicatorMetadata: (): Promise<IndicatorMetadataResponse> =>
